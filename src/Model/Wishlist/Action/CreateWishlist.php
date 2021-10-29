@@ -3,13 +3,12 @@
 namespace App\Model\Wishlist\Action;
 
 use App\Model\Action;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CreateWishlist extends Action
 {
-    public function __construct(
-        private string $name
-    )
-    {}
+    #[NotBlank()]
+    private string $name;
 
     public function getName() : string
     {

@@ -2,7 +2,7 @@
 
 namespace App\Controller\Wish\Field;
 
-use App\Controller\ApiController;
+use App\Controller\Controller;
 use App\Entity\Wish\Field\WishField;
 use App\Entity\Wish\Wish;
 use App\Entity\Wishlist\Wishlist;
@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class WishFieldController extends ApiController
+class WishFieldController extends Controller
 {
     public function __construct(
         private WishFieldService $wishFieldService
@@ -20,7 +20,7 @@ class WishFieldController extends ApiController
     {   
     }
 
-    #[Route('/list/{id}/wish/{id}/field/create', name: 'wish_field_create')]
+    #[Route('/list/{wishlist.id}/wish/{wish.id}/field/create', name: 'wish_field_create')]
     public function create(Wishlist $wishlist, Wish $wish, Request $request): Response
     {
         // @todo check access to wishlist and wish
@@ -41,7 +41,7 @@ class WishFieldController extends ApiController
         ]);
     }
 
-    #[Route('/list/{id}/wish/{id}/field/{id}/remove', name: 'wish_field_remove')]
+    #[Route('/list/{wishlist.id}/wish/{wish.id}/field/{wishField.id}/remove', name: 'wish_field_remove')]
     public function remove(Wishlist $wishlist, Wish $wish, WishField $wishField): Response
     {
         // @todo check access to wishlist and wish

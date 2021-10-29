@@ -3,14 +3,16 @@
 namespace App\Model\Wishlist\Action\Subscription;
 
 use App\Model\Action;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CreateWishlistSubscription extends Action
 {
-    public function __construct(
-        private string $userEmail,
-        private int $role
-    )
-    {}
+    #[Email()]
+    private string $userEmail;
+
+    #[NotBlank()]
+    private int $role;
 
     public function getRole() : int
     {

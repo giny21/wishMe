@@ -2,7 +2,7 @@
 
 namespace App\Controller\Wish\Subscription;
 
-use App\Controller\ApiController;
+use App\Controller\Controller;
 use App\Entity\Wish\Subscription\WishSubscription;
 use App\Entity\Wish\Wish;
 use App\Entity\Wishlist\Wishlist;
@@ -10,7 +10,7 @@ use App\Service\Wish\Subscription\WishSubscriptionService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class WishSubscriptionController extends ApiController
+class WishSubscriptionController extends Controller
 {
     public function __construct(
         private WishSubscriptionService $wishSubscriptionService
@@ -18,7 +18,7 @@ class WishSubscriptionController extends ApiController
     {   
     }
 
-    #[Route('/list/{id}/wish/{id}/subscription/create', name: 'wish_subscription_create')]
+    #[Route('/list/{wishlist.id}/wish/{wish.id}/subscription/create', name: 'wish_subscription_create')]
     public function create(Wishlist $wishlist, Wish $wish): Response
     {
         // @todo check access to wishlist and wish
@@ -34,7 +34,7 @@ class WishSubscriptionController extends ApiController
         ]);
     }
 
-    #[Route('/list/{id}/wish/{id}/subscription/{id}/remove', name: 'wish_subscription_remove')]
+    #[Route('/list/{wishlist.id}/wish/{wish.id}/subscription/{wishSubscription.id}/remove', name: 'wish_subscription_remove')]
     public function remove(Wishlist $wishlist, Wish $wish, WishSubscription $wishSubscription): Response
     {
         // @todo check access to wishlist and wish

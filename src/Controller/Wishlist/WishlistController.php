@@ -2,7 +2,7 @@
 
 namespace App\Controller\Wishlist;
 
-use App\Controller\ApiController;
+use App\Controller\Controller;
 use App\Entity\Wishlist\Wishlist;
 use App\Model\Wishlist\Action\CreateWishlist;
 use App\Service\Wishlist\WishlistService;
@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class WishlistController extends ApiController
+class WishlistController extends Controller
 {
     public function __construct(
         private WishlistService $wishlistService
@@ -18,7 +18,7 @@ class WishlistController extends ApiController
     {   
     }
 
-    #[Route('/list/{id}', name: 'wishlist_show')]
+    #[Route('/list/{wishlist.id}', name: 'wishlist_show')]
     public function show(Wishlist $wishlist)
     {
         return $this->render('wishlist/wishlist/index.html.twig', [ // @todo create template
@@ -47,7 +47,7 @@ class WishlistController extends ApiController
         ]);
     }
 
-    #[Route('/list/{id}/remove', name: 'wishlist_remove')]
+    #[Route('/list/{wishlist.id}/remove', name: 'wishlist_remove')]
     public function remove(Wishlist $wishlist): Response
     {
         // @todo check access to wishlist and wish

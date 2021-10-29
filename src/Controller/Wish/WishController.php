@@ -2,7 +2,7 @@
 
 namespace App\Controller\Wish;
 
-use App\Controller\ApiController;
+use App\Controller\Controller;
 use App\Entity\Wish\Wish;
 use App\Entity\Wishlist\Wishlist;
 use App\Model\Wish\Action\AddWishField;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class WishController extends ApiController
+class WishController extends Controller
 {
     public function __construct(
         private WishService $wishService
@@ -22,7 +22,7 @@ class WishController extends ApiController
     {   
     }
 
-    #[Route('/list/{id}/wish/{id}', name: 'wish_show')]
+    #[Route('/list/{wishlist.id}/wish/{wish.id}', name: 'wish_show')]
     public function show(Wishlist $wishlist, Wish $wish): Response
     {
         return $this->render('wish/wish/index.html.twig', [ // @todo create template
@@ -31,7 +31,7 @@ class WishController extends ApiController
         ]);
     }
 
-    #[Route('/list/{id}/wish/create', name: 'wish_create')]
+    #[Route('/list/{wishlist.id}/wish/create', name: 'wish_create')]
     public function create(Wishlist $wishlist, Request $request): Response
     {
         // @todo check access to wishlist and wish
@@ -53,7 +53,7 @@ class WishController extends ApiController
         ]);
     }
 
-    #[Route('/list/{id}/wish/{id}/remove', name: 'wish_create')]
+    #[Route('/list/{wishlist.id}/wish/{wish.id}/remove', name: 'wish_create')]
     public function remove(Wishlist $wishlist, Wish $wish): Response
     {
         // @todo check access to wishlist and wish

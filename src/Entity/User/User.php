@@ -3,6 +3,7 @@
 namespace App\Entity\User;
 
 use App\Entity\DoctrineEntity;
+use App\Entity\User\UserToken;
 use App\Entity\Wish\Subscription\WishSubscription;
 use App\Entity\Wishlist\Subscription\WishlistSubscription;
 use App\Repository\User\UserRepository;
@@ -11,6 +12,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\OneToOne;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 

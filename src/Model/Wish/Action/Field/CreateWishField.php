@@ -3,14 +3,15 @@
 namespace App\Model\Wish\Action\Field;
 
 use App\Model\Action;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CreateWishField extends Action
 {
-    public function __construct(
-        private string $name,
-        private string $value
-    )
-    {}
+    #[NotBlank()]
+    private string $name;
+
+    #[NotBlank()]
+    private string $value;
 
     public function getName() : string
     {
