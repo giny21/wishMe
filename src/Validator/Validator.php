@@ -2,24 +2,29 @@
 
 namespace App\Validator;
 
+use App\Entity\DoctrineEntity;
 use App\Model\Action;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class Validator
 {
+    public function __construct(private ValidatorInterface $validator)
+    {  
+    }
+
     protected function validate(Action $action) : ConstraintViolationList
     {
-        return Validation::createValidator()->validate($action);
+        return $this->validator->validate($action);
     }
 
     protected function addViolation(
         ConstraintViolationList $violations, 
         string $reason, 
         array $params, 
-        Action $action, 
+        Action|DoctrineEntity $object, 
         mixed $invalidValue
     ) : self
     {
@@ -28,10 +33,11 @@ abstract class Validator
                 $reason,
                 null,
                 $params,
-                $action,
+                $object,
                 null,
+                $invalidValue,
                 null,
-                $invalidValue
+                Response::HTTP_INTERNAL_SERVER_ERROR
             )
         );
         return $this;

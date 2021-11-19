@@ -1,0 +1,56 @@
+{% extends 'base_logged.html.twig' %}
+
+{% block page %}{{pageTitle}} {{wishlist.name}}{% endblock %}
+{% set wishes = wishlist.wishes %}
+
+{% if app.user != null and wishlist.isOwner(app.user) %}
+    {% set itemsPerPage = 14 %}
+{% else %}
+    {% set itemsPerPage = 15 %}
+{% endif %}
+
+{% set page = app.request.query.get('page') ?? 0 %}
+{% set pagesCount = (wishes|length / itemsPerPage)|round(0, 'floor') %}
+
+{% block content %}
+    {% if app.user != null and wishlist.isOwner(app.user) %}
+        <div 
+            class="btn btn-primary wish-box" 
+            style="font-size: 40px; font-weight: 700; justify-content: center;" 
+            data-bs-toggle="modal" 
+            data-bs-target="#createWishModal"
+        >
+            +
+        </div>
+        {{ include("wish/parts/create/create-modal.html.twig", {sourceWishlist: wishlist}) }}
+    {% endif %}
+    {% for i in 0..(itemsPerPage - 1) %}
+        {% if wishes[page * itemsPerPage + i] is defined %}
+            {{ include("wish/parts/list/list-element.html.twig", {wish: wishes[page * itemsPerPage + i]}) }}
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block pagination %}
+    {% if pagesCount > 0 %}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item {{page == 0 ? 'disabled' : ''}}">
+                    <a class="page-link" href="?page={{page - 1}}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% for i in 0..pagesCount %}
+                    <li class="page-item {{page == i ? 'active' : ''}}">
+                        <a class="page-link" href="?page={{i}}">{{i + 1}}</a>
+                    </li>
+                {% endfor %}
+                <li class="page-item {{page == pagesCount ? 'disabled' : ''}}">
+                    <a class="page-link" href="?page={{page + 1}}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
+{% endblock %}

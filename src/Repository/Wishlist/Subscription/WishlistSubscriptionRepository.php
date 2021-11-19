@@ -30,7 +30,8 @@ class WishlistSubscriptionRepository extends DoctrineRepository
         $wishlistSubscription = new WishlistSubscription();
 
         $wishlistSubscription
-            ->setRole($role);
+            ->setRole($role)
+            ->setFavorite(false);
             
         $wishlist
             ->addSubscription($wishlistSubscription);
@@ -39,5 +40,16 @@ class WishlistSubscriptionRepository extends DoctrineRepository
 
         $this->save($wishlistSubscription);
         return $wishlistSubscription;
+    }
+
+    public function findOneByWishlistAndUser(Wishlist $wishlist, User $user) : ?WishlistSubscription
+    {
+        return $this
+            ->findOneBy(
+                [
+                    "wishlist" => $wishlist,
+                    "user" => $user
+                ]
+            );
     }
 }

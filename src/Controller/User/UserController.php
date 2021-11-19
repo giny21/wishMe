@@ -3,6 +3,7 @@
 namespace App\Controller\User;
 
 use App\Controller\Controller;
+use App\Controller\HomeController;
 use App\Model\User\Action\CreateUser;
 use App\Model\User\Action\SignInUser;
 use App\Service\User\UserService;
@@ -23,44 +24,50 @@ class UserController extends Controller
     #[Route('/user/create', name: 'user_create')]
     public function create(Request $request): Response
     {
-        // @todo check user not logged
-        /** @var CreateUser */
-        $createUser = $this->deserialize(
-            $request->getContent(),
-            CreateUser::class
-        );
-        $this->userValidator->validateCreate($createUser);
-        $this->userService->create($createUser);
+        if($this->getUser())
+            return $this->redirectToRoute('wishlist_show_my');
 
-        return $this->redirectToRoute('user_sign_in');
+        if($request->getMethod() === "POST"){
+            /** @var CreateUser */
+            $createUser = $this->deserialize(
+                $request->request->all(),
+                CreateUser::class
+            );
+            $this->userValidator->validateCreate($createUser);
+            $this->userService->create($createUser);
+        
+            $this->signIn($request);
+            return $this->redirectToRoute('wishlist_show_my');
+        }
+            
+        return $this->render('user/sign-up-form.html.twig', [
+            'controller_name' => 'UserController'
+        ]);
     }
 
     #[Route('/user/sign-in', name: 'user_sign_in')]
     public function signIn(Request $request): Response
     {
-        // @todo check user not logged
+        if($this->getUser())
+            return $this->redirectToRoute('wishlist_show_my');
+            
         /** @var SignInUser */
         $signInUser = $this->deserialize(
-            $request->getContent(),
+            $request->request->all(),
             SignInUser::class
         );
-
-        $user = $this->userService->signIn($signInUser);
-
-        return $this->render('user/index.html.twig', [ // @todo create template
-            'controller_name' => 'UserController',
-            'user' => $user
-        ]);
+    
+        $this->userValidator->validateSignIn($signInUser);
+        $this->userService->signIn($signInUser);
+        
+        return $this->redirectToRoute('wishlist_show_my');
     }
 
     #[Route('/user/sign-out', name: 'user_sign_out')]
     public function signOut(): Response
     {
-        $user = $this->getUser();
-        $this->userService->signOut($user);
+        $this->userService->signOut();
 
-        return $this->render('index.html.twig', [ // @todo create template
-            'controller_name' => 'UserController'
-        ]);
+        return $this->redirectToRoute('home_show');
     }
 }

@@ -1,0 +1,19 @@
+<div 
+    class="modal modal-dialog-scrollable fade" 
+    id="listWishLinksModal_{{wish.id}}" 
+    tabindex="-1" 
+    aria-labelledby="modalLabel" 
+    aria-hidden="true"
+>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Linki</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ include("wish/link/list.html.twig") }}
+            </div>
+        </div>
+    </div>
+</div>

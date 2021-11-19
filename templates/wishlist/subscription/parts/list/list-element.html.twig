@@ -1,0 +1,34 @@
+{% set wishlist = subscription.wishlist %}
+<tr>
+    <td>
+        {{subscription.user.email}}
+    </td>
+    <td>
+        {% if subscription.role == constant('ROLE_OWNER', subscription) %}
+            Właściciel
+        {% else %}
+            Znajomy
+        {% endif %}
+    </td>
+    <td>
+    {% if app.user != null  %}
+        {% if wishlist.isOwner(app.user) %}
+            {% if subscription.user != app.user %}
+                <a href="/list/{{wishlist.id}}/subscription/{{subscription.id}}/remove">
+                    <i class="fas fa-trash"></i>
+                </a>
+            {% elseif wishlist.ownerSubscriptions.count > 1 %}
+                <a href="/list/{{wishlist.id}}/subscription/{{subscription.id}}/remove">
+                    <i class="fas fa-trash"></i>
+                </a>
+            {% endif %}
+        {% elseif subscription.user == app.user%}
+            <a href="/list/{{wishlist.id}}/subscription/{{subscription.id}}/remove">
+                <i class="fas fa-trash"></i>
+            </a>
+        {% endif %}
+            
+    {% endif %}
+    </td>
+</tr>
+    

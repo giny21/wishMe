@@ -1,0 +1,83 @@
+<div class="wishlist-box">
+    <div class="wishlist-box-actions">
+        <div>
+            {% if wishlist.publicAvailable %}
+                <i class="fas fa-lock-open" title="Publiczna"></i>
+            {% else %}
+                <i class="fas fa-lock" title="Prywatna"></i>
+            {% endif %}
+            
+        </div>
+        <div>
+            {% if app.user != null and wishlist.isOwner(app.user) %}
+                <i 
+                    class="fas fa-pen clickable"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#editWishlistModal_{{wishlist.id}}">
+                </i>
+            {% endif %}
+        </div>
+    </div>
+    <div class="wishlist-box-header">
+        <div class="h6">
+            {{wishlist.name}}
+            {% if app.user != null %}
+                <a class="clickable" href="/list/{{wishlist.id}}/favorite">
+                {% if wishlist.getSubscription(app.user).favorite %}
+                    <i class="fas fa-heart"></i>
+                {% else %}
+                    <i class="far fa-heart"></i>
+                {% endif %}
+                </a>
+            {% endif %}
+            
+        </div>
+        <div class="d-inline-flex justify-content-center m-1">
+        {% if not wishlist.isOwner(app.user) %}
+            {% if wishlist.ownerSubscriptions.count > 3 %}
+                {% for i in 0..2 %}
+                    {% set email = wishlist.ownerSubscriptions[i].user.email|split('@') %}
+                    <label class="badge bg-warning" title="{{wishlist.ownerSubscriptions[i].user.email}}">
+                        <i class="fas fa-user"></i>
+                        {{email[0]}}
+                    </label>
+                {% endfor %}
+                <label class="badge bg-warning">+{{wishlist.ownerSubscriptions.count- 3}}</label>
+            {% else %}
+                {% for ownerSubscription in wishlist.ownerSubscriptions %}
+                    {% set email = ownerSubscription.user.email|split('@') %}
+                    <label class="badge bg-warning" title="{{ownerSubscription.user.email}}">
+                        <i class="fas fa-user"></i>
+                        {{email[0]}}
+                    </label>
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+        </div>
+    </div>
+    <div class="wishlist-box-body">
+        <a href="/list/{{wishlist.id}}" class="wishlist-box-body-element">
+            <span class="counter">
+                {{wishlist.wishes.count > 9 ? "9+" : wishlist.wishes.count}}
+            </span>
+            <i class="fas fa-gift"></i>
+            <p class="wishlist-box-body-element-title">Życzenia</p>
+        </a>
+
+        <div 
+            class="wishlist-box-body-element clickable" 
+            data-bs-toggle="modal" 
+            data-bs-target="#listWishlistSubscriptionsModal_{{wishlist.id}}"
+        >
+            <span class="counter">
+                {{wishlist.subscriptions.count > 9 ? "9+" : wishlist.subscriptions.count}}
+            </span>
+            <i class="fas fa-user-friends"></i>
+            <p class="wishlist-box-body-element-title">Znajomi</p>
+        </div>
+    </div>
+</div>
+{{ include("wishlist/subscription/list-modal.html.twig", {wishlist: wishlist}) }}
+{% if app.user != null and wishlist.isOwner(app.user) %}
+    {{ include("wishlist/parts/edit/edit-modal.html.twig", {wishlist: wishlist}) }}
+{% endif %}

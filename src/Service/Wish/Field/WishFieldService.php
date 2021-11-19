@@ -25,6 +25,16 @@ class WishFieldService
         return $wish;
     }
 
+    public function switchImportant(WishField $wishField) : void
+    {
+        $this->wishFieldRepository->sets(
+            $wishField,
+            [
+                "important" => !$wishField->getImportant()
+            ]
+        );
+    }
+
     public function remove(
         WishField $wishField
     ) : void

@@ -3,7 +3,6 @@
 namespace App\Entity\User;
 
 use App\Entity\DoctrineEntity;
-use App\Entity\User\UserToken;
 use App\Entity\Wish\Subscription\WishSubscription;
 use App\Entity\Wishlist\Subscription\WishlistSubscription;
 use App\Repository\User\UserRepository;
@@ -12,7 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -28,7 +27,7 @@ class User extends DoctrineEntity implements UserInterface, PasswordAuthenticate
     #[Column(type: "string")]
     private string $password;
 
-    #[OneToMany(mappedBy: "user", targetEntity: WishlistSubscription::class)]
+    #[OneToMany(mappedBy: "user", targetEntity: WishlistSubscription::class), OrderBy(["favorite" => "DESC"])]
     private Collection $wishlistSubscriptions;
 
     #[OneToMany(mappedBy: "user", targetEntity: WishSubscription::class)]

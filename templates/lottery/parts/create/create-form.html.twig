@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        <input id="name" type="name"/>
+        <input id="email" type="email"/>
+        <button onclick="add()">Add</button>
+
+        <table class="table tickets" style="font-size: 11px">
+            <thead>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <br>
+        <br>
+        <table class="table result" style="font-size: 11px">
+            <thead>
+                <th>Giver</th>
+                <th>Taker</th>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <button onclick="startLottery()">Losuj</button>
+       <script>
+            var users = [];
+            function startLottery(){
+                for(i = 0; i < users.length; i++){
+                    let user = users[i];
+
+                    user.excluded = [];
+                    $(".exclude" + user.id + ":checkbox:checked").each(function(){
+                        user.excluded.push($(this).attr("data-index"));
+                    });
+                }
+                $.post('/lottery/create', JSON.stringify(users), function(data){
+                    let result = "";
+                    for(i = 0; i < data.length; i++){
+                        let giver = data[i].id;
+                        let taker = data[i].taker;
+
+                        result += "<tr><td>" + users[giver].name + "</td>";
+                        result += "<td>";
+                        if(users[giver].email){
+                            result += "<button class='send' data-giver-name='" + users[giver].name + "' data-taker-name='" + users[taker].name + "' data-giver-email='" + users[giver].email + "'>Wyślij</button>";
+                        }
+                        else{
+                            result += "<button class='show' data-taker-name='" + users[taker].name + "'>Pokaż</button>";
+                        }
+                        result += "</td></tr>"
+                    }
+                    $("table.result tbody").html(result);
+                });
+            }
+
+            $(document.body).on('click', '.send', function(){
+                let takerName = $(this).attr("data-taker-name");
+                let giverEmail = $(this).attr("data-giver-email");
+                let giverName = $(this).attr("data-giver-name");
+
+                $.post(
+                    '/lottery/send', 
+                    JSON.stringify({
+                        "giverName": giverName,
+                        "takerName": takerName,
+                        "giverEmail": giverEmail
+                    }),
+                    function(data){
+                        console.log("Wysłano do "+giverName);
+                    }
+                );
+            });
+
+            $(document.body).on('click', '.show', function(){
+                let takerName = $(this).attr("data-taker-name");
+
+                $(this).replaceWith(takerName);
+            });
+
+            function add(){
+                let name = $("#name").val();
+                let email = $("#email").val();
+
+                users.push({
+                    "id": users.length,
+                    "name": name,
+                    "email": email,
+                    "excluded": []
+                });
+
+                let tableHead = "<tr><th></th>";
+                let tableBody = "";
+
+                for(i = 0; i < users.length; i++){
+                    let user = users[i];
+                    tableHead += "<th>" + user.name + " " + user.email + "</th>";
+
+                    tableBody += "<tr><td>" + user.name + " " + user.email + "</td>";
+
+                    for(j = 0; j < users.length; j++){
+                        tableBody += "<td><input class='exclude"+ user.id +"' data-index='"+ users[j].id +"' type='checkbox'/></td>"
+                    }
+                    tableBody += "</tr>";
+                }
+
+                tableHead += "</tr>";
+
+                $("table.tickets thead").html(tableHead);
+                $("table.tickets tbody").html(tableBody);
+            }
+       </script> 
+    </body>
+</html>

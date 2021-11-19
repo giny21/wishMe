@@ -1,0 +1,25 @@
+<form method="POST" action="/list/edit/{{wishlist.id}}">
+    <div class="modal-body">
+        <div class="form-group mt-2">
+            <label class="small" for="name">Nazwa</label>
+            <input id="name" name="name" class="form-control" type="text" value="{{wishlist.name}}" maxlength="40" required>
+        </div>
+        <div class="form-check">
+            <input 
+                class="form-check-input" 
+                type="checkbox" 
+                value="true" 
+                id="publicAvailable" 
+                name="publicAvailable"
+                {{wishlist.publicAvailable ? "checked" : ""}}
+            >
+            <label class="form-check-label" for="publicAvailable">
+                Jest publiczna
+            </label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Zapisz</button>
+        <a href="/list/{{wishlist.id}}/remove" class="btn btn-primary">Usuń</a>
+    </div>
+</form>

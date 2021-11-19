@@ -2,6 +2,7 @@
 
 namespace App\Repository\Wishlist;
 
+use App\Entity\User\User;
 use App\Entity\Wishlist\Wishlist;
 use App\Repository\DoctrineRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,9 +25,24 @@ class WishlistRepository extends DoctrineRepository
         $wishlist = new Wishlist();
 
         $wishlist
-            ->setName($name);
+            ->setName($name)
+            ->setPublicAvailable(false);
 
         $this->save($wishlist);
         return $wishlist;
+    }
+
+    /** @return Wishlist[] */
+    public function findByUser(User $user) : array
+    {
+        return $this
+            ->createQueryBuilder('wishlist')
+            ->leftJoin('wishlist.subscriptions', 'wishlistSubscription')
+            ->where('wishlistSubscription.user = :userId')
+            ->addOrderBy('wishlistSubscription.favorite', 'DESC')
+            ->addOrderBy('wishlist.id', 'DESC')
+            ->setParameter('userId', $user->getId())
+            ->getQuery()
+            ->getResult();
     }
 }

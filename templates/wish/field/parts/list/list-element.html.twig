@@ -1,0 +1,29 @@
+<tr>
+    <td>
+        {{field.name}}
+    </td>
+    <td>
+        {{field.value}}
+    </td>
+    <td>
+        <div class="d-flex justify-content-between align-items-center">
+        {% if app.user != null and wish.isOwner(app.user) %}
+            <a href="/wish/{{wish.id}}/field/{{field.id}}/remove">
+                <i class="fas fa-trash"></i>
+            </a>
+            <a href="/wish/{{wish.id}}/field/{{field.id}}/important">
+                {% if field.important %}
+                    <i class="fas fa-star"></i>
+                {% else %}
+                    <i class="far fa-star"></i>
+                {% endif %}
+            </a>
+        {% else %}
+            {% if field.important %}
+                <i class="fas fa-star"></i>
+            {% endif %}
+        {% endif %}
+        </div>
+    </td>
+</tr>
+    

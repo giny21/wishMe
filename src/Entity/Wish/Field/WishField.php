@@ -16,10 +16,13 @@ class WishField extends DoctrineEntity
     private Wish $wish;
 
     #[Column(type: "text")]
-    private $name;
+    private string $name;
 
     #[Column(type: "text", nullable: true)]
-    private $value;
+    private string $value;
+
+    #[Column(type: "boolean")]
+    private bool $important;
 
     public function getWish() : Wish
     {
@@ -53,6 +56,18 @@ class WishField extends DoctrineEntity
     public function setValue(string $value) : self
     {
         $this->value = $value;
+
+        return $this;
+    }
+
+    public function getImportant() : bool
+    {
+        return $this->important;
+    }
+
+    public function setImportant(bool $important) : self
+    {
+        $this->important = $important;
 
         return $this;
     }

@@ -1,0 +1,13 @@
+<tr>
+    <td>
+        <a href="{{link.rawLink}}" target=”_blank”>{{link.rawLink}}</a>
+    </td>
+    <td>
+        {% if app.user != null and wish.isOwner(app.user) %}
+            <a href="/wish/{{wish.id}}/link/{{link.id}}/remove">
+                <i class="fas fa-trash"></i>
+            </a>
+        {% endif %}
+    </td>
+</tr>
+    

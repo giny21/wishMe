@@ -1,0 +1,59 @@
+{% extends 'base_logged.html.twig' %}
+
+{% block page %}{{pageTitle}}{% endblock %}
+
+{% if app.request.attributes.get('_route') == "wish_show_my" %}
+    {% set itemsPerPage = 14 %}
+{% else %}
+    {% set itemsPerPage = 15 %}
+{% endif %}
+
+{% set page = app.request.query.get('page') ?? 0 %}
+{% set pagesCount = (wishes|length / itemsPerPage)|round(0, 'floor') %}
+
+{% block content %}
+    {% if app.request.attributes.get('_route') == "wish_show_my" %}
+        <div 
+            class="btn btn-primary wish-box" 
+            style="font-size: 40px; font-weight: 700; justify-content: center;" 
+            data-bs-toggle="modal" 
+            data-bs-target="#createWishModal"
+        >
+            +
+        </div>
+        {{ include("wish/parts/create/create-modal.html.twig") }}
+    {% elseif wishes|length == 0 %}
+        <div style="padding: 15px">
+            <h5>Gdy dołączysz do realizacji jakiegoś życzenia pojawi się ono tutaj</h5>
+        </div>
+    {% endif %}
+    {% for i in 0..(itemsPerPage - 1) %}
+        {% if wishes[page * itemsPerPage + i] is defined %}
+            {{ include("wish/parts/list/list-element.html.twig", {wish: wishes[page * itemsPerPage + i]}) }}
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block pagination %}
+    {% if pagesCount > 0 %}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item {{page == 0 ? 'disabled' : ''}}">
+                    <a class="page-link" href="?page={{page - 1}}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% for i in 0..pagesCount %}
+                    <li class="page-item {{page == i ? 'active' : ''}}">
+                        <a class="page-link" href="?page={{i}}">{{i + 1}}</a>
+                    </li>
+                {% endfor %}
+                <li class="page-item {{page == pagesCount ? 'disabled' : ''}}">
+                    <a class="page-link" href="?page={{page + 1}}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
+{% endblock %}

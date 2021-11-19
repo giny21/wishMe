@@ -25,6 +25,9 @@ class WishlistSubscription extends DoctrineEntity
     #[Column(type: "integer")]
     private int $role;
 
+    #[Column(type: "boolean")]
+    private bool $favorite;
+
     public function getUser() : User
     {
         return $this->user;
@@ -57,6 +60,18 @@ class WishlistSubscription extends DoctrineEntity
     public function setRole(int $role) : self
     {
         $this->role = $role;
+
+        return $this;
+    }
+
+    public function getFavorite() : bool
+    {
+        return $this->favorite;
+    }
+
+    public function setFavorite(bool $favorite) : self
+    {
+        $this->favorite = $favorite;
 
         return $this;
     }

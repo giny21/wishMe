@@ -1,0 +1,15 @@
+<table class="table">
+    <thead>
+        <th scope="col">Link</th>
+        <th scope="col"></th>
+    </thead>
+
+    <tbody>
+        {% for link in wish.links %}
+            {{ include("wish/link/parts/list/list-element.html.twig") }}
+        {% endfor %}
+        {% if app.user != null and wish.isOwner(app.user) %}
+            {{ include("wish/link/parts/create/create-form.html.twig") }}
+        {% endif %}
+    </tbody>
+</table>

@@ -26,7 +26,8 @@ class WishFieldRepository extends DoctrineRepository
 
         $wishField
             ->setName($name)
-            ->setValue($value);
+            ->setValue($value)
+            ->setImportant(false);
 
         $wish
             ->addField($wishField);

@@ -9,22 +9,20 @@ security:
             entity:
                 class: App\Entity\User\User
                 property: email
-    access_denied_url: /
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        default:
-            pattern: ^/.
-            security: false
-        user_create:
-            pattern: ^/user/create/.
-            security: false
-        user_sign_in:
-            pattern: ^/user/sign-in/.
-            security: false
         main:
             lazy: true
             provider: app_user_provider
-            custom_authenticators: 
-                - App\Security\Authenticator\UserTokenAuthenticator
+    
+    access_control:
+        - { path: '^/user/sign-in', roles: IS_AUTHENTICATED_ANONYMOUSLY}
+        - { path: '^/user/create', roles: IS_AUTHENTICATED_ANONYMOUSLY}
+        - { path: '^/user', roles: ROLE_USER}
+        - { path: '^/list/[0-9]+', roles: IS_AUTHENTICATED_ANONYMOUSLY}
+        - { path: '^/list', roles: ROLE_USER}
+        # - { path: '^/wish/[0-9]+/fulfilled', roles: IS_AUTHENTICATED_ANONYMOUSLY}
+        - { path: '^/wish/', roles: ROLE_USER}
+        - { path: '^/', roles: IS_AUTHENTICATED_ANONYMOUSLY}

@@ -1,0 +1,16 @@
+<table class="table">
+    <thead>
+        <th scope="col">Cecha</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+    </thead>
+
+    <tbody>
+        {% for field in wish.fields %}
+            {{ include("wish/field/parts/list/list-element.html.twig") }}
+        {% endfor %}
+        {% if app.user != null and wish.isOwner(app.user) %}
+            {{ include("wish/field/parts/create/create-form.html.twig") }}
+        {% endif %}
+    </tbody>
+</table>

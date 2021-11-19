@@ -7,7 +7,9 @@ use App\Entity\Wish\Link\WishLink;
 use App\Entity\Wish\Wish;
 use App\Entity\Wishlist\Wishlist;
 use App\Model\Wish\Action\Link\CreateWishLink;
+use App\Security\Voter\Wish\WishVoter;
 use App\Service\Wish\Link\WishLinkService;
+use App\Validator\Wish\Link\WishLinkValidator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,43 +17,42 @@ use Symfony\Component\Routing\Annotation\Route;
 class WishLinkController extends Controller
 {
     public function __construct(
+        private WishLinkValidator $wishLinkValidator,
         private WishLinkService $wishLinkService
     )
     {   
     }
 
-    #[Route('/list/{wishlist.id}/wish/{wish.id}/link/create', name: 'wish_link_create')]
-    public function create(Wishlist $wishlist, Wish $wish, Request $request): Response
+    #[Route('/wish/{wish}/link/create', name: 'wish_link_create')]
+    public function create(Wish $wish, Request $request): Response
     {
-        // @todo check access to wishlist and wish
+        $this->denyAccessUnlessGranted(WishVoter::ACTION_EDIT, $wish);
+
         /** @var CreateWishLink */
         $createWishLink = $this->deserialize(
-            $request->getContent(),
+            $request->request->all(),
             CreateWishLink::class
         );
+
+        $this->wishLinkValidator->validateCreate($createWishLink);
 
         $wish = $this->wishLinkService->create(
             $wish,
             $createWishLink
         );
 
-        return $this->render('wish/wish/index.html.twig', [ // @todo create template
-            'controller_name' => 'WishController',
-            'wish' => $wish
-        ]);
+        return $this->redirect($request->headers->get('referer'));
     }
 
-    #[Route('/list/{wishlist.id}/wish/{wish.id}/link/{wishLink.id}/remove', name: 'wish_link_remove')]
-    public function remove(Wishlist $wishlist, Wish $wish, WishLink $wishLink): Response
+    #[Route('/wish/{wish}/link/{wishLink}/remove', name: 'wish_link_remove')]
+    public function remove(Wish $wish, WishLink $wishLink, Request $request): Response
     {
-        // @todo check access to wishlist and wish
+        $this->denyAccessUnlessGranted(WishVoter::ACTION_EDIT, $wish);
+
         $this->wishLinkService->remove(
             $wishLink
         );
 
-        return $this->render('wish/wish/index.html.twig', [ // @todo create template
-            'controller_name' => 'WishController',
-            'wish' => $wish
-        ]);
+        return $this->redirect($request->headers->get('referer'));
     }
 }

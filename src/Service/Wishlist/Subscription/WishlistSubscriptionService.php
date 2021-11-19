@@ -31,6 +31,18 @@ class WishlistSubscriptionService
         return $wishlist;
     }
 
+    public function switchFavorite(
+        WishlistSubscription $wishlistSubscription
+    )
+    {
+        $this->wishlistSubscriptionRepository->sets(
+            $wishlistSubscription,
+            [
+                'favorite' => !$wishlistSubscription->getFavorite()
+            ]
+        );
+    }
+
     public function remove(
         WishlistSubscription $wishlistSubscription
     ) : void

@@ -7,7 +7,10 @@ use App\Entity\Wish\Field\WishField;
 use App\Entity\Wish\Wish;
 use App\Entity\Wishlist\Wishlist;
 use App\Model\Wish\Action\Field\CreateWishField;
+use App\Security\Voter\Wish\Subscription\WishSubscriptionVoter;
+use App\Security\Voter\Wish\WishVoter;
 use App\Service\Wish\Field\WishFieldService;
+use App\Validator\Wish\Field\WishFieldValidator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,43 +18,54 @@ use Symfony\Component\Routing\Annotation\Route;
 class WishFieldController extends Controller
 {
     public function __construct(
+        private WishFieldValidator $wishFieldValidator,
         private WishFieldService $wishFieldService
     )
     {   
     }
 
-    #[Route('/list/{wishlist.id}/wish/{wish.id}/field/create', name: 'wish_field_create')]
-    public function create(Wishlist $wishlist, Wish $wish, Request $request): Response
+    #[Route('/wish/{wish}/field/create', name: 'wish_field_create')]
+    public function create(Wish $wish, Request $request): Response
     {
-        // @todo check access to wishlist and wish
+        $this->denyAccessUnlessGranted(WishVoter::ACTION_EDIT, $wish);
+
         /** @var CreateWishField */
         $createWishField = $this->deserialize(
-            $request->getContent(),
+            $request->request->all(),
             CreateWishField::class
         );
+
+        $this->wishFieldValidator->validateCreate($createWishField);
 
         $wish = $this->wishFieldService->create(
             $wish,
             $createWishField
         );
 
-        return $this->render('wish/wish/index.html.twig', [ // @todo create template
-            'controller_name' => 'WishController',
-            'wish' => $wish
-        ]);
+        return $this->redirect($request->headers->get('referer'));
     }
 
-    #[Route('/list/{wishlist.id}/wish/{wish.id}/field/{wishField.id}/remove', name: 'wish_field_remove')]
-    public function remove(Wishlist $wishlist, Wish $wish, WishField $wishField): Response
+    #[Route('/wish/{wish}/field/{wishField}/remove', name: 'wish_field_remove')]
+    public function remove(Wish $wish, WishField $wishField, Request $request): Response
     {
-        // @todo check access to wishlist and wish
+        $this->denyAccessUnlessGranted(WishVoter::ACTION_EDIT, $wish);
+
         $this->wishFieldService->remove(
             $wishField
         );
+        
+        return $this->redirect($request->headers->get('referer'));
+    }
 
-        return $this->render('wish/wish/index.html.twig', [ // @todo create template
-            'controller_name' => 'WishController',
-            'wish' => $wish
-        ]);
+    #[Route('/wish/{wish}/field/{wishField}/important', name: 'wish_field_remove')]
+    public function switchImportant(Wish $wish, WishField $wishField, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted(WishVoter::ACTION_EDIT, $wish);
+
+        $this->wishFieldService->switchImportant(
+            $wishField
+        );
+        
+        return $this->redirect($request->headers->get('referer'));
     }
 }

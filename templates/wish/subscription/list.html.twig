@@ -1,0 +1,14 @@
+<table class="table">
+    <thead>
+        <th scope="col">Email</th>
+        <th scope="col"></th>
+    </thead>
+
+    <tbody>
+        {% for subscription in wish.subscriptions %}
+            {% if not wish.isOwner(subscription.user) %}
+                {{ include("wish/subscription/parts/list/list-element.html.twig") }}
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>

@@ -16,6 +16,17 @@ abstract class DoctrineRepository extends ServiceEntityRepository
         parent::__construct($registry, $entityClass);
     }
 
+    /** @param int[] $ids */
+    public function finds(array $ids) : array
+    {
+        return $this
+            ->createQueryBuilder("entity")
+            ->where("entity.id IN (:ids)")
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+    }
+
     protected function lock(DoctrineEntity $subject) : DoctrineEntity
     {
         $id = $subject->getId();
@@ -65,6 +76,17 @@ abstract class DoctrineRepository extends ServiceEntityRepository
     {
         $entityManager = $this->_em;
         $entityManager->refresh($subject);
+    }
+
+    public function sets(DoctrineEntity $entity, array $fieldsValues) : void
+    {
+        $entity = $this->lock($entity);
+        foreach($fieldsValues as $field => $value){
+            $setter = "set".ucfirst($field);
+            if(method_exists($entity, $setter))
+                $entity->$setter($value);
+        }
+        $this->unlock($entity);
     }
 
     // public function set(DoctrineEntity $entity, string $field, $value, ?bool $lock = true) : void

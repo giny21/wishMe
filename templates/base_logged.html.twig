@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% set route = app.request.attributes.get('_route') %}
+    <div class="container-fluid" style="padding: 0px;">
+        <div class="row">
+            <div class="col-12">
+                <nav class="navbar navbar-dark bg-primary">
+                    <div class="container-fluid">
+                        <a class="navbar-brand">{% block page %}{% endblock %}</a>
+                        <div>
+                            <h5 
+                                title="Roadmap"
+                                style="cursor:pointer; color: white"
+                                data-bs-toggle="popover" 
+                                data-bs-content="
+                                    <p>Ostatnio dodane: Ulubione listy i ważne prezenty, priorytet cech, stronnicowanie, wypełnione życzenia</p>
+                                    <p>0.2: subskrybowanie i wypełnianie życzeń bez konta, zapraszanie osób do aplikacji (poprzez dodanie do wishlisty) </p>
+                                    <p>0.2.5: chęć dołączenia do wishlisty (z oczekiwaniem na potwierdzenie), szukajka, komentarz po wypełnieniu życzenia
+                                    <p>0.3: Proponowanie prezentów, RWD, Ajax, sortowanie</p>
+                                    <p>Wkrótce: Czaty list i życzeń, powiadomienia, moduł loterii prezentowej, tłumaczenia, plugin do przeglądarek</p>"
+                                data-bs-container="body"
+                                data-bs-html="true" 
+                            >
+                                v0.1.5
+                            </h5>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="row">
+            <nav class="main-menu navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+                <ul class="navbar-nav">
+                    {% if app.user != null %}
+                        <li class="nav-item dropdown">
+                            <a 
+                                class="nav-link dropdown-toggle" 
+                                href="#"
+                                id="dropdownWishlistMenu"
+                                data-bs-toggle="dropdown"
+                            >
+                                Listy
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownWishlistMenu">
+                                <a 
+                                    class="dropdown-item {{route == 'wishlist_show_my' ? 'active' : ''}}"
+                                    href="/list/my/"
+                                >
+                                    Moje
+                                </a>
+                                <a 
+                                    class="dropdown-item {{route == 'wishlist_show_friend' ? 'active' : ''}}" 
+                                    href="/list/friend/"
+                                >
+                                    Znajomych
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a 
+                                class="nav-link dropdown-toggle" 
+                                href="#"
+                                id="dropdownWishlistMenu"
+                                data-bs-toggle="dropdown"
+                            >
+                                Życzenia
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownWishlistMenu">
+                                <a 
+                                    class="dropdown-item {{route == 'wish_show_my' ? 'active' : ''}}"
+                                    href="/wish/my/"
+                                >
+                                    Moje
+                                </a>
+                                <a 
+                                    class="dropdown-item {{route == 'wish_show_friend' ? 'active' : ''}}" 
+                                    href="/wish/friend/"
+                                >
+                                    Znajomych
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            {# <a class="nav-link" href="/lottery/create/">Stwórz loterię</a> #}
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/user/sign-out">Wyloguj</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">Zaloguj się</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/user/create">Stwórz konto</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-12 d-flex flex-row flex-wrap" style="min-height: 200px">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 d-flex flex-row flex-wrap justify-content-center">
+                {% block pagination %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

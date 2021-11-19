@@ -1,0 +1,13 @@
+<tr>
+    <td>
+        {{subscription.user.email}}
+    </td>
+    <td>
+        {% if app.user != null and subscription.user == app.user %}
+            <a href="/wish/{{wish.id}}/subscription/{{subscription.id}}/remove">
+                <i class="fas fa-trash"></i>
+            </a>
+        {% endif %}
+    </td>
+</tr>
+    

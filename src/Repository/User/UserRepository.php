@@ -39,4 +39,9 @@ class UserRepository extends DoctrineRepository
         
         return $user;
     }
+
+    public function findOneByEmail(string $email) : ?User
+    {
+        return parent::findOneByEmail($email);
+    }
 }

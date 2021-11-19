@@ -1,0 +1,171 @@
+{% set subsCount = wish.subscriptions.count - 1 %}
+{% set linksCount = wish.links.count %}
+{% set fieldsCount = wish.fields.count %}
+
+<div class="wish-box {{wish.fulfilled ? 'fulfilled' : ''}}">
+    <div class="wish-box-actions">
+        <div>
+            {% if wish.important %}
+                <i class="fas fa-star" title="Ważne"></i>
+            {% endif %}
+        </div>
+        <div>
+        {% if app.user != null and wish.isOwner(app.user) %}
+            <i 
+                class="fas fa-pen clickable"
+                data-bs-toggle="modal" 
+                data-bs-target="#editWishModal_{{wish.id}}">
+            </i>
+        {% endif %}
+        </div>
+    </div>
+    <div class="wish-box-header">
+        <div class="h6">
+            {{wish.name}}
+            {% if app.user == null %}
+                {# <a class="clickable" href="/wish/{{wish.id}}/fulfilled">
+                {% if wish.fulfilled %}
+                    <i class="fas fa-check-circle"></i>
+                {% else %}
+                    <i class="far fa-check-circle"></i>
+                {% endif %}
+                </a> #}
+            {% else %}
+                {% if wish.getSubscribtion(app.user) %}
+                    <a class="clickable" href="/wish/{{wish.id}}/fulfilled">
+                    {% if wish.fulfilled %}
+                        <i class="fas fa-check-circle"></i>
+                    {% else %}
+                        <i class="far fa-check-circle"></i>
+                    {% endif %}
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="d-inline-flex justify-content-center m-1">
+        {% if app.user != null and wish.isOwner(app.user) %}
+            {% if wish.wishlists.count > 3 %}
+                {% for i in 0..2 %}
+                    <label class="badge bg-primary" title="{{wish.wishlists[i].name}}">
+                        <i class="fas fa-clipboard-list"></i>
+                        {{wish.wishlists[i].name}}
+                    </label>
+                {% endfor %}
+                <label class="badge bg-primary">+{{wish.wishlists.count - 3}}</label>
+            {% else %}
+                {% for wishlist in wish.wishlists %}
+                    <label class="badge bg-primary" title="{{wishlist.name}}">
+                        <i class="fas fa-clipboard-list"></i>
+                        {{wishlist.name}}
+                    </label>
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+        </div>
+    </div>
+    <div class="wish-box-body">
+
+        <div 
+            class="wish-box-body-element clickable"
+            data-bs-toggle="modal" 
+            data-bs-target="#listWishFieldsModal_{{wish.id}}"
+        >
+            <span class="counter">{{fieldsCount > 9 ? "9+" : fieldsCount}}</span>
+            <i class="fas fa-puzzle-piece"></i>
+            <p class="wish-box-body-element-title">Cechy</p>
+        </div>
+
+        <div 
+            class="wish-box-body-element clickable"
+            data-bs-toggle="modal" 
+            data-bs-target="#listWishLinksModal_{{wish.id}}"
+        >
+            <span class="counter">{{linksCount > 9 ? "9+" : linksCount}}</span>
+            <i class="fas fa-link"></i>
+            <p class="wish-box-body-element-title">Linki</p>
+        </div>
+
+        {% if app.user != null %}
+            {% if wish.isOwner(app.user) %}
+                {% if wish.fulfilled %}   
+                    <div class="wish-box-body-element">
+                        <i class="fas fa-check-circle"></i>
+                        <p class="wish-box-body-element-title">Wypełnione</p>
+                    </div>
+                {% else %}
+                <div class="wish-box-body-element">
+                    <span class="counter">{{subsCount > 9 ? "9+" : subsCount}}</span>
+                    <i class="fas fa-user-friends"></i>
+                    <p class="wish-box-body-element-title">Znajomi</p>
+                </div>
+                {% endif %}
+
+            {% else %}
+                {% if not wish.getSubscribtion(app.user) %}
+                    {% if wish.fulfilled %}   
+                        <div class="wish-box-body-element">
+                            <i class="fas fa-check-circle"></i>
+                            <p class="wish-box-body-element-title">Wypełnione</p>
+                        </div>
+                    {% else %}
+                        <a href="/wish/{{wish.id}}/subscription/create" class="wish-box-body-element">
+                            <span class="counter">{{subsCount ? "9+" : subsCount}}</span>
+                            <i class="fas fa-user-plus"></i>
+                            <p class="wish-box-body-element-title">Dołącz</p>
+                        </a>
+                    {% endif %}
+
+                {% else %}
+                    {% if wish.fulfilled %}   
+                        <div class="wish-box-body-element">
+                            <i class="fas fa-check-circle"></i>
+                            <p class="wish-box-body-element-title">Wypełnione</p>
+                        </div>
+                    {% else %}
+                        <div 
+                            class="wish-box-body-element clickable"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#listWishSubscriptionsModal_{{wish.id}}"
+                        >
+                            <span class="counter">{{subsCount > 9 ? "9+" : subsCount}}</span>
+                            <i class="fas fa-user-friends"></i>
+                            <p class="wish-box-body-element-title">Znajomi</p>
+                        </div>
+                    {% endif %}
+
+                    <a 
+                        href="/wish/{{wish.id}}/subscription/{{wish.getSubscribtion(app.user).id}}/remove" 
+                        class="wish-box-body-element"
+                    >
+                        <i class="fas fa-sign-out-alt"></i>
+                        <p class="wish-box-body-element-title">Opuść</p>
+                    </a>
+                    
+                {% endif %}
+            {% endif %}
+        {% else %}
+            {% if wish.fulfilled %}   
+                <div class="wish-box-body-element">
+                    <i class="fas fa-check-circle"></i>
+                    <p class="wish-box-body-element-title">Wypełnione</p>
+                </div>
+            {% else %}
+                <a href="/" class="wish-box-body-element">
+                    <span class="counter">{{subsCount > 9 ? "9+" : subsCount}}</span>
+                    <i class="fas fa-user-friends"></i>
+                    <p class="wish-box-body-element-title">Zaloguj się, aby spełnić życzenie</p>
+                </a>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{{ include("wish/link/list-modal.html.twig", {wish: wish}) }}
+{{ include("wish/field/list-modal.html.twig", {wish: wish}) }}
+
+{% if app.user != null and not wish.isOwner(app.user) %}
+    {% if not wish.fulfilled %}
+        {{ include("wish/subscription/list-modal.html.twig", {wish: wish}) }}
+    {% endif %}
+{% else %}
+    {{ include("wish/parts/edit/edit-modal.html.twig", {wish: wish}) }}
+{% endif %}
