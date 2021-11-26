@@ -31,7 +31,7 @@ class WishFieldController extends Controller
 
         /** @var CreateWishField */
         $createWishField = $this->deserialize(
-            $request->request->all(),
+            $request,
             CreateWishField::class
         );
 

@@ -68,7 +68,7 @@ class WishController extends Controller
     {
         /** @var CreateWish */
         $createWish = $this->deserialize(
-            $request->request->all(),
+            $request,
             CreateWish::class,
             [
                 'wishlists' => fn(array $ids) => $this->wishlistService->gets($ids)->toArray()
@@ -94,7 +94,7 @@ class WishController extends Controller
 
         /** @var EditWish */
         $editWish = $this->deserialize(
-            $request->request->all(),
+            $request,
             EditWish::class,
             [
                 'wishlists' => fn(array $ids) => $this->wishlistService->gets($ids)->toArray()

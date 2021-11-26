@@ -28,7 +28,7 @@ class WishlistSubscriptionController extends Controller
     {
         /** @var CreateWishlistSubscription */
         $createWishlistSubscription = $this->deserialize(
-            $request->request->all(),
+            $request,
             CreateWishlistSubscription::class
         );
         $this->denyAccessUnlessGranted(WishlistVoter::ACTION_EDIT, $wishlist);

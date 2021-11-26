@@ -1,0 +1,56 @@
+@import "/node_modules/bootstrap/scss/bootstrap.scss";
+@import "/node_modules/select2/dist/css/select2.css";
+
+@import "wishlist/wishlist-box.scss";
+@import "wish/wish-box.scss";
+
+html, body{
+    overflow-x: hidden;
+}
+
+.counter{
+    position: absolute;
+    border-radius: 100px;
+    color: white;
+    background-color: darkred;
+    font-size: 9px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    margin-top: 10px;
+    margin-left: calc(50% - 40px);
+    left: 0;
+    right: 0;
+}
+
+.clickable{
+    color: #0d6efd;
+    cursor: pointer;
+}
+
+.clickable:hover{
+    color: gold;
+}
+
+.main-menu .dropdown-menu{
+    background-color: #e3f2fd; 
+    border: 0px; 
+    margin-top: 0.5rem; 
+    border-top: 1px dotted black; 
+    border-radius: 0px;
+    z-index: 99999999;
+}
+
+.modal .select2{
+    width: 100% !important;
+}
+
+.select2-close-mask{
+    z-index: 2099;
+}
+
+.select2-dropdown{
+    z-index: 3051;
+}

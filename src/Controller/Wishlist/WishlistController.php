@@ -12,6 +12,7 @@ use App\Security\Voter\Wishlist\WishlistVoter;
 use App\Service\Wishlist\WishlistService;
 use App\Validator\Wishlist\WishlistValidator;
 use Doctrine\Common\Collections\ArrayCollection;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,10 +20,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class WishlistController extends Controller
 {
     public function __construct(
+        SerializerInterface $serializer,
         private WishlistValidator $wishlistValidator,
         private WishlistService $wishlistService
     )
     {   
+        parent::__construct($serializer);
     }
 
     #[Route('/list/{wishlist}', name: 'wishlist_show', requirements: ['wishlist' => '\d+'])]
@@ -68,7 +71,7 @@ class WishlistController extends Controller
     {
         /** @var CreateWishlist */
         $createWishlist = $this->deserialize(
-            $request->request->all(),
+            $request,
             CreateWishlist::class
         );
 
@@ -88,7 +91,7 @@ class WishlistController extends Controller
 
         /** @var EditWishlist */
         $editWishlist = $this->deserialize(
-            $request->request->all(),
+            $request,
             EditWishlist::class
         );
         

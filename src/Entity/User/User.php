@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
+use JMS\Serializer\Annotation\Exclude;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -21,16 +22,28 @@ class User extends DoctrineEntity implements UserInterface, PasswordAuthenticate
     #[Column(type: "string", length: 180, unique: true)]
     private ?string $email;
 
-    #[Column(type: "json")]
+    #[
+        Column(type: "json"),
+        Exclude()
+    ]
     private array $roles = [];
 
-    #[Column(type: "string")]
+    #[
+        Column(type: "string"),
+        Exclude()
+    ]
     private string $password;
 
-    #[OneToMany(mappedBy: "user", targetEntity: WishlistSubscription::class), OrderBy(["favorite" => "DESC"])]
+    #[
+        OneToMany(mappedBy: "user", targetEntity: WishlistSubscription::class), OrderBy(["favorite" => "DESC"]),
+        Exclude()
+    ]
     private Collection $wishlistSubscriptions;
 
-    #[OneToMany(mappedBy: "user", targetEntity: WishSubscription::class)]
+    #[
+        OneToMany(mappedBy: "user", targetEntity: WishSubscription::class),
+        Exclude()
+    ]
     private Collection $wishSubscriptions;
 
     public function __construct()

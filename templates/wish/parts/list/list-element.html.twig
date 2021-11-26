@@ -31,7 +31,7 @@
                 {% endif %}
                 </a> #}
             {% else %}
-                {% if wish.getSubscribtion(app.user) %}
+                {% if not wish.isOwner(app.user) %}
                     <a class="clickable" href="/wish/{{wish.id}}/fulfilled">
                     {% if wish.fulfilled %}
                         <i class="fas fa-check-circle"></i>

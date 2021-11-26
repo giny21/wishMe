@@ -30,7 +30,7 @@ class WishLinkController extends Controller
 
         /** @var CreateWishLink */
         $createWishLink = $this->deserialize(
-            $request->request->all(),
+            $request,
             CreateWishLink::class
         );
 

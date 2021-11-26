@@ -8,11 +8,16 @@
         {% endblock %}
 
         {% block javascripts %}
+            <script>
+                var user = {{ user|raw }};
+            </script>
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <div id="app">
+            <router-view></router-view>
+        </div>
     </body>
 </html>

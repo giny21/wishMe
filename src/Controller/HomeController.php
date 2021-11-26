@@ -11,11 +11,12 @@ class HomeController extends Controller
     #[Route('/', name: 'home_show')]
     public function show(): Response
     {
-        if($this->getUser())
-            return $this->redirectToRoute('wishlist_show_my');
-        
-        return $this->render('home/index.html.twig', [
-            'controller_name' => 'UserController'
-        ]);
+        $user = $this->getUser();
+        return $this->render(
+            'base.html.twig',
+            [
+                'user' => $this->serialize($user)
+            ]
+        );
     }
 }

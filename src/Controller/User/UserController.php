@@ -3,11 +3,11 @@
 namespace App\Controller\User;
 
 use App\Controller\Controller;
-use App\Controller\HomeController;
 use App\Model\User\Action\CreateUser;
 use App\Model\User\Action\SignInUser;
 use App\Service\User\UserService;
 use App\Validator\User\UserValidator;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,52 +15,56 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends Controller
 {
     public function __construct(
+        SerializerInterface $serializer,
         private UserValidator $userValidator,
         private UserService $userService
     )
     {   
+        parent::__construct($serializer);
     }
 
     #[Route('/user/create', name: 'user_create')]
-    public function create(Request $request): Response
+    public function createAction(Request $request): Response
     {
-        if($this->getUser())
-            return $this->redirectToRoute('wishlist_show_my');
-
-        if($request->getMethod() === "POST"){
-            /** @var CreateUser */
-            $createUser = $this->deserialize(
-                $request->request->all(),
-                CreateUser::class
+        if($user = $this->getUser())
+            return $this->respond(
+                [
+                    "user" => $user
+                ]
             );
-            $this->userValidator->validateCreate($createUser);
-            $this->userService->create($createUser);
+
+        /** @var CreateUser */
+        $createUser = $this->deserialize(
+            $request,
+            CreateUser::class
+        );
+
+        $this->userValidator->validateCreate($createUser);
+        $this->userService->create($createUser);
         
-            $this->signIn($request);
-            return $this->redirectToRoute('wishlist_show_my');
-        }
-            
-        return $this->render('user/sign-up-form.html.twig', [
-            'controller_name' => 'UserController'
-        ]);
+        return $this->signInAction($request);
     }
 
     #[Route('/user/sign-in', name: 'user_sign_in')]
-    public function signIn(Request $request): Response
+    public function signInAction(Request $request): Response
     {
         if($this->getUser())
-            return $this->redirectToRoute('wishlist_show_my');
+            return $this->respond();
             
         /** @var SignInUser */
         $signInUser = $this->deserialize(
-            $request->request->all(),
+            $request,
             SignInUser::class
         );
     
         $this->userValidator->validateSignIn($signInUser);
-        $this->userService->signIn($signInUser);
-        
-        return $this->redirectToRoute('wishlist_show_my');
+        $user = $this->userService->signIn($signInUser);
+
+        return $this->respond(
+            [
+                "user" => $user
+            ]
+        );
     }
 
     #[Route('/user/sign-out', name: 'user_sign_out')]

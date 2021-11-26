@@ -14,9 +14,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserValidator extends Validator
 {
-    private CONST VIOLATION_EMAIL_USED = "Email already used by another User";
-    private CONST VIOLATION_PASSWORDS_NOT_MATCH = "Passwords not match";
-    private CONST VIOLATION_USER_NOT_FOUND = "User not found or invalid password";
+    private CONST VIOLATION_EMAIL_USED = "Email używany przez innego użytkownika";
+    private CONST VIOLATION_PASSWORDS_NOT_MATCH = "Hasła nie pasują do siebie";
+    private CONST VIOLATION_USER_NOT_FOUND = "Użytkownik o podanym haśle i emailu nie istnieje";
 
     public function __construct(
         ValidatorInterface $validator,
