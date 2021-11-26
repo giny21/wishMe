@@ -57,7 +57,7 @@ class WishFieldController extends Controller
         return $this->redirect($request->headers->get('referer'));
     }
 
-    #[Route('/wish/{wish}/field/{wishField}/important', name: 'wish_field_remove')]
+    #[Route('/wish/{wish}/field/{wishField}/important', name: 'wish_field_important')]
     public function switchImportant(Wish $wish, WishField $wishField, Request $request): Response
     {
         $this->denyAccessUnlessGranted(WishVoter::ACTION_EDIT, $wish);

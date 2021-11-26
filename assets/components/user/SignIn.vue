@@ -1,6 +1,6 @@
 <template>
     <form 
-        class="row justify-content-md-center border-top shadow p-3 mb-1 bg-white" 
+        class="row justify-content-md-center border-top shadow p-3 mb-1 bg-white c-sign-in" 
         @submit="submit"
         v-bind:class="{'was-validated': wasValidated}"
     >

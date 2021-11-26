@@ -6,11 +6,11 @@ import '@fortawesome/fontawesome-free/js/regular'
 import '@fortawesome/fontawesome-free/js/brands'
 import 'select2';
 
-import * as Vue from 'vue';
-import * as VueRouter from 'vue-router';
+import Vue from 'vue';
 import store from './store';
-import routes from './routes';
+import router from './router';
 import axios from 'axios';
+import { BootstrapVue } from 'bootstrap-vue'
 
 $(
     () => {
@@ -33,50 +33,16 @@ $('.select-2-enable')
 
 axios.defaults.headers.common['X-Requested-With'] = "XMLHttpRequest";
 
-const router = new VueRouter
-.createRouter(
+const app = new Vue(
     {
-        history: VueRouter.createWebHashHistory(),
-        routes
-    }
-);
-
-router.beforeEach(
-    (to, from, next) => {
-        if(to.name == 'SignIn' || to.name == 'SignUp'){
-            if(store.state.user)
-                next({ name: 'Dashboard'});
-            else
-                next();
-        }
-        else{
-            if(to.meta.isAuth){
-                if(store.state.user)
-                    next();
-                else
-                    next({ name: 'SignIn'});
-            }
-            else{
-                next();
-            }
-        }
-    }
-)
-
-const app = Vue.createApp(
-    {
+        router,
         data(){
             return {
                 state: {},
                 $state: store.state
             }
-        },
-        mounted(){
-            if(user)
-                store.set('user', user)
         }
     }
-);
-app.use(router);
+).$mount("#app");
 
-app.mount("#app");
+Vue.use(BootstrapVue);

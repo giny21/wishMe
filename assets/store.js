@@ -1,14 +1,12 @@
-import { reactive } from 'vue'
-
 const store = {
     debug: true,
   
-    state: reactive({
-        user: null,
+    state: {
+        user: user,
         wishlists: [],
         wishes: [],
         messages: []
-    }),
+    },
   
     set(field, newValue) {
         if (this.debug) 
