@@ -3,7 +3,7 @@
 </template>
 
 <script>
-    import SignIn from '../../../components/user/SignIn'
+    import SignIn from '../../../components/user/SignIn.vue'
 
     export default {
         components: {

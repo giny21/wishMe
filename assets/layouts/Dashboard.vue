@@ -11,27 +11,26 @@
             <c-menu></c-menu>
         </div>
         <div class="row">
-            <c-placeholder></c-placeholder>
+            <slot></slot>
         </div>
     </div>
 </template>
 
 <script>
-import Header from '../components/top/header/Header';
-import Menu from '../components/top/menu/Menu';
-import Content from '../components/content/Content';
+import Header from '../components/top/header/Header.vue';
+import Menu from '../components/top/menu/Menu.vue';
 
 export default {
     components: {
         'c-header': Header,
-        'c-menu': Menu,
-        'c-placeholder': Content
+        'c-menu': Menu
     }
 }
 </script>
 
 <style scoped>
     .l-dashboard{
+        min-height: 100vh;
         padding: 0px;
     }
 </style>

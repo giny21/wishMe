@@ -1,34 +1,14 @@
 <template>
     <b-nav class="navbar navbar-expand-lg navbar-light c-menu">
-        <b-nav-item-dropdown
-            id="wishlist"
-            text="Listy"
-        >
-            <b-dropdown-item 
-                v-bind:class="{'is-disabled': isDisabled}"
-            >
-                Moje
-            </b-dropdown-item>
-            <b-dropdown-item>Znajomych</b-dropdown-item>
-        </b-nav-item-dropdown>
-        <b-nav-item-dropdown
-            id="wish"
-            text="Życzenia"
-        >
-            <b-dropdown-item 
-                v-bind:class="{'is-disabled': isDisabled}"
-            >
-                Moje
-            </b-dropdown-item>
-            <b-dropdown-item>Znajomych</b-dropdown-item>
-        </b-nav-item-dropdown>
+        <b-nav-item href="#/list">Listy</b-nav-item>
+        <b-nav-item href="#/wish">Życzenia</b-nav-item>
         <b-nav-item href="user/sign-out">Wyloguj</b-nav-item>
     </b-nav>
 </template>
 
 <script>
 import { BNav, BNavItem, BNavItemDropdown, BDropdownItem } from "bootstrap-vue";
-import store from "../../../store";
+import store from "../../../store/store";
 
 export default {
     components: {
@@ -60,6 +40,4 @@ export default {
     ::v-deep .is-disabled > *{
         color: darkgrey;
     }
-    
-    
 </style>

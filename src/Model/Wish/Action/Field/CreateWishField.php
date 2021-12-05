@@ -10,15 +10,14 @@ class CreateWishField extends Action
     #[NotBlank()]
     private string $name;
 
-    #[NotBlank()]
-    private string $value;
+    private ?string $value = null;
 
     public function getName() : string
     {
         return $this->name;
     }
 
-    public function getValue() : string
+    public function getValue() : ?string
     {
         return $this->value;
     }

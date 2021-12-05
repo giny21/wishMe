@@ -10,6 +10,7 @@ use App\Security\Voter\Wishlist\Subscription\WishlistSubscriptionVoter;
 use App\Security\Voter\Wishlist\WishlistVoter;
 use App\Service\Wishlist\Subscription\WishlistSubscriptionService;
 use App\Validator\Wishlist\Subscription\WishlistSubscriptionValidator;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,10 +18,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class WishlistSubscriptionController extends Controller
 {
     public function __construct(
+        SerializerInterface $serializer,
         private WishlistSubscriptionValidator $wishlistSubscriptionValidator,
         private WishlistSubscriptionService $wishlistSubscriptionService
     )
     {   
+        parent::__construct($serializer);
     }
 
     #[Route('/list/{wishlist}/subscription/create', name: 'wishlist_subscription_create')]
@@ -38,12 +41,16 @@ class WishlistSubscriptionController extends Controller
             $wishlist,
             $createWishlistSubscription
         );
-        
-        return $this->redirectToRoute('wishlist_show_my');
+
+        return $this->respond(
+            [
+                "wishlist" => $wishlist
+            ]
+        );
     }
 
     #[Route('/list/{wishlist}/subscription/{wishlistSubscription}/remove', name: 'wishlist_subscription_remove')]
-    public function remove(Wishlist $wishlist, WishlistSubscription $wishlistSubscription, Request $request): Response
+    public function remove(Wishlist $wishlist, WishlistSubscription $wishlistSubscription): Response
     {
         $this->denyAccessUnlessGranted(WishlistSubscriptionVoter::ACTION_REMOVE, $wishlistSubscription);
 
@@ -52,6 +59,10 @@ class WishlistSubscriptionController extends Controller
             $wishlistSubscription
         );
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->respond(
+            [
+                "wishlist" => $wishlist
+            ]
+        );
     }
 }

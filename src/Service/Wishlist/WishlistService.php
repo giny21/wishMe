@@ -64,6 +64,16 @@ class WishlistService
         );
     }
 
+    /** @return Collection<Wishlist> */
+    public function getsUser(User $user) : Collection
+    {
+        return new ArrayCollection(
+            $this
+                ->wishlistRepository
+                ->findByUser($user)
+        );
+    }
+
     public function create(User $user, CreateWishlist $createWishlist) : Wishlist
     {
         $wishlist = $this->wishlistRepository->create(

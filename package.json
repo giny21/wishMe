@@ -28,5 +28,9 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"
+    },
+    "dependencies": {
+        "v-scroll-threshold": "^2.0.0",
+        "vue-sticky-directive": "^0.0.10"
     }
 }

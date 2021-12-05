@@ -33,13 +33,12 @@ class WishlistController extends Controller
     {
         $user = $this->getUser();
         $this->denyAccessUnlessGranted(WishlistVoter::ACTION_SHOW, $wishlist);
-        
-        return $this->render('wishlist/show.html.twig', [ // @todo create template
-            'controller_name' => 'WishlistController',
-            'pageTitle' => "Lista", //@todo Translation
-            'wishlist' => $wishlist,
-            'wishlists' =>  $user ? $this->wishlistService->getsOwned($user) : new ArrayCollection()
-        ]);
+
+        return $this->respond(
+            [
+                "wishlist" => $wishlist
+            ]
+        );
     }
 
     #[Route('/list/my', name: 'wishlist_show_my')]
@@ -66,6 +65,18 @@ class WishlistController extends Controller
         ]);
     }
 
+    #[Route('/list', name: 'wishlist_show_all')]
+    public function showAll(): Response
+    {
+        $user = $this->getUser();
+
+        return $this->respond(
+            [
+                "wishlists" => $this->wishlistService->getsUser($user)
+            ]
+        );
+    }
+
     #[Route('/list/create', name: 'wishlist_create')]
     public function create(Request $request): Response
     {
@@ -76,15 +87,19 @@ class WishlistController extends Controller
         );
 
         $this->wishlistValidator->validateCreate($createWishlist);
-        $this->wishlistService->create(
+        $wishlist = $this->wishlistService->create(
             $this->getUser(),
             $createWishlist
         );
-        
-        return $this->redirectToRoute('wishlist_show_my');
+
+        return $this->respond(
+            [
+                "wishlist" => $wishlist
+            ]
+        );
     }
 
-    #[Route('/list/edit/{wishlist}', name: 'wishlist_edit')]
+    #[Route('/list/{wishlist}/edit', name: 'wishlist_edit')]
     public function edit(Wishlist $wishlist, Request $request): Response
     {
         $this->denyAccessUnlessGranted(WishlistVoter::ACTION_EDIT, $wishlist);
@@ -101,7 +116,7 @@ class WishlistController extends Controller
             $editWishlist
         );
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->respond();
     }
 
     #[Route('/list/{wishlist}/remove', name: 'wishlist_remove', requirements: ['wishlist' => '\d+'])]
@@ -111,7 +126,8 @@ class WishlistController extends Controller
         $this->wishlistService->remove(
             $wishlist
         );
-        return $this->redirectToRoute('wishlist_show_my');
+
+        return $this->respond();
     }
 
     #[Route('/list/{wishlist}/favorite', name: 'wishlist_favorite_switch', requirements: ['wishlist' => '\d+'])]
@@ -123,6 +139,6 @@ class WishlistController extends Controller
             $this->getUser()
         );
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->respond();
     }
 }

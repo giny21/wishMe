@@ -5,7 +5,7 @@
 </template>
 
 <script>
-    import LandingLayout from '../../layouts/Landing'
+    import LandingLayout from '../../layouts/Landing.vue'
 
     export default {
         components: {

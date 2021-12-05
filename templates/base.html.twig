@@ -10,6 +10,7 @@
         {% block javascripts %}
             <script>
                 var user = {{ user|raw }};
+                var debug = true;
             </script>
             {{ encore_entry_script_tags('app') }}
         {% endblock %}

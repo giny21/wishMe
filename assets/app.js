@@ -7,7 +7,7 @@ import '@fortawesome/fontawesome-free/js/brands'
 import 'select2';
 
 import Vue from 'vue';
-import store from './store';
+import store from './store/store';
 import router from './router';
 import axios from 'axios';
 import { BootstrapVue } from 'bootstrap-vue'
@@ -39,8 +39,11 @@ const app = new Vue(
         data(){
             return {
                 state: {},
-                $state: store.state
+                store: store.state
             }
+        },
+        mounted(){
+            store.init();
         }
     }
 ).$mount("#app");
