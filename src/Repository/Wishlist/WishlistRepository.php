@@ -3,8 +3,12 @@
 namespace App\Repository\Wishlist;
 
 use App\Entity\User\User;
+use App\Entity\Wishlist\Subscription\WishlistSubscription;
 use App\Entity\Wishlist\Wishlist;
+use App\Model\Wishlist\Action\SearchWishlist;
 use App\Repository\DoctrineRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -15,6 +19,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class WishlistRepository extends DoctrineRepository
 {
+    private CONST LIMIT_PER_PAGE = 20;
+
+    private CONST SORTS = [
+        ["wishlist.id", "DESC"]
+    ];
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Wishlist::class);
@@ -39,9 +49,52 @@ class WishlistRepository extends DoctrineRepository
             ->createQueryBuilder('wishlist')
             ->leftJoin('wishlist.subscriptions', 'wishlistSubscription')
             ->where('wishlistSubscription.user = :userId')
-            ->addOrderBy('wishlistSubscription.favorite', 'DESC')
             ->addOrderBy('wishlist.id', 'DESC')
             ->setParameter('userId', $user->getId())
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByUserPerPage(User $user, int $page, int $sort, int $role) : array
+    {
+        $query = $this
+            ->createQueryBuilder('wishlist')
+            ->leftJoin('wishlist.subscriptions', 'wishlistSubscription')
+            ->where('wishlistSubscription.user = :userId')
+            ->setParameter('userId', $user->getId());
+
+        if($role)
+            $query
+                ->andWhere('wishlistSubscription.role = :role')
+                ->setParameter('role', $role);
+
+        return $query
+            ->addOrderBy(...self::SORTS[$sort])
+            ->setFirstResult($page * self::LIMIT_PER_PAGE)
+            ->setMaxResults(self::LIMIT_PER_PAGE)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByUserAndSearchOptions(User $user, SearchWishlist $searchWishlist) : array
+    {
+        $query = $this
+            ->createQueryBuilder('wishlist')
+            ->leftJoin('wishlist.subscriptions', 'wishlistSubscription')
+            ->where('wishlistSubscription.user = :userId')
+            ->setParameter('userId', $user->getId());
+
+        if($name = $searchWishlist->getName())
+            $query
+                ->andWhere('wishlist.name Like :name')
+                ->setParameter('name', $name.'%');
+
+        if($role = $searchWishlist->getRole())
+            $query
+                ->andWhere('wishlistSubscription.role = :role')
+                ->setParameter('role', $role);
+
+        return $query
             ->getQuery()
             ->getResult();
     }

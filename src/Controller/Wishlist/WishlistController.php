@@ -8,6 +8,7 @@ use App\Entity\Wishlist\Subscription\WishlistSubscription;
 use App\Entity\Wishlist\Wishlist;
 use App\Model\Wishlist\Action\CreateWishlist;
 use App\Model\Wishlist\Action\EditWishlist;
+use App\Model\Wishlist\Action\SearchWishlist;
 use App\Security\Voter\Wishlist\WishlistVoter;
 use App\Service\Wishlist\WishlistService;
 use App\Validator\Wishlist\WishlistValidator;
@@ -31,7 +32,6 @@ class WishlistController extends Controller
     #[Route('/list/{wishlist}', name: 'wishlist_show', requirements: ['wishlist' => '\d+'])]
     public function show(Wishlist $wishlist): Response
     {
-        $user = $this->getUser();
         $this->denyAccessUnlessGranted(WishlistVoter::ACTION_SHOW, $wishlist);
 
         return $this->respond(
@@ -41,38 +41,39 @@ class WishlistController extends Controller
         );
     }
 
-    #[Route('/list/my', name: 'wishlist_show_my')]
-    public function showOwned(): Response
-    {
-        $user = $this->getUser();
-
-        return $this->render('wishlist/list.html.twig', [
-            'controller_name' => 'WishlistController',
-            'pageTitle' => "Moje listy", //@todo Translation
-            'wishlists' => $this->wishlistService->getsOwned($user)
-        ]);
-    }
-
-    #[Route('/list/friend', name: 'wishlist_show_friend')]
-    public function showSubscribed(): Response
-    {
-        $user = $this->getUser();
-
-        return $this->render('wishlist/list.html.twig', [
-            'controller_name' => 'WishlistController',
-            'pageTitle' => "Listy znajomych", //@todo Translation
-            'wishlists' => $this->wishlistService->getsSubscribed($user)
-        ]);
-    }
-
-    #[Route('/list', name: 'wishlist_show_all')]
-    public function showAll(): Response
+    #[Route('/list/page/{page}/{sort}/{role}', name: 'wishlist_get_ids_by_page')]
+    public function getIdsByPage(?int $page = 0, ?int $sort = 0, ?int $role = 0) : Response
     {
         $user = $this->getUser();
 
         return $this->respond(
             [
-                "wishlists" => $this->wishlistService->getsUser($user)
+                "wishlists" => $this
+                    ->wishlistService
+                    ->getsUser($user, $page, $sort, $role)
+                    ->map(
+                        fn(Wishlist $wishlist) => $wishlist->getId()
+                    )
+            ]
+        );
+    }
+
+    #[Route('/list/search', name: 'wishlist_search')]
+    public function search(Request $request): Response
+    {
+        $user = $this->getUser();
+
+        /** @var SearchWishlist */
+        $searchWishlist = $this->deserialize(
+            $request,
+            SearchWishlist::class
+        );
+
+        $wishlists = $this->wishlistService->search($user, $searchWishlist);
+
+        return $this->respond(
+            [
+                "wishlists" => $wishlists
             ]
         );
     }
@@ -116,7 +117,11 @@ class WishlistController extends Controller
             $editWishlist
         );
 
-        return $this->respond();
+        return $this->respond(
+            [
+                'wishlist' => $wishlist
+            ]
+        );
     }
 
     #[Route('/list/{wishlist}/remove', name: 'wishlist_remove', requirements: ['wishlist' => '\d+'])]

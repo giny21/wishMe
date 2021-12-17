@@ -1,12 +1,9 @@
 <template>
     <sidebar-layout>
-        <content v-if="store.wishlistsInitiated">
-            <h6>Dodaj listę</h6>
-            <wishlist-create></wishlist-create>
+        <content>
+            <h6>Dodaj życzenie</h6>
+            <wish-create></wish-create>
         </content>
-        <div class="d-flex mt-5 justify-content-center" v-else>
-            <b-spinner variant="primary" label="Spinning"></b-spinner>
-        </div>
     </sidebar-layout>
 </template>
 
@@ -14,13 +11,13 @@
     import SidebarLayout from '../../../../layouts/Sidebar.vue';
     import store from '../../../../store/store';
     import { BSpinner } from 'bootstrap-vue';
-    import WishlistCreate from '../../../../components/sidebar/Wishlist/WishlistCreate.vue';
+    import WishCreate from '../../../../components/sidebar/Wish/WishCreate.vue';
 
     export default {
         components: {
             SidebarLayout,
             BSpinner,
-            WishlistCreate
+            WishCreate
         },
 
         data(){

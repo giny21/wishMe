@@ -33,6 +33,7 @@
 </template>
 
 <script>
+    // @todo: Validation, indicators
     import store from '../../../store/store';
     import caller from '../../../store/wishlist/caller';
     import Wishlist from '../../../store/wishlist/entity';
@@ -54,7 +55,8 @@
                 .create(this.addArray)
                 .then(
                     (response) => {
-                        store.add('wishlists', new Wishlist(response.data.wishlist)); 
+                        let wishlist = new Wishlist(response.data.wishlist);
+                        store.add('wishlists', wishlist); 
                         let matched = this.$route.matched;
                         this.$router.push({ name: matched[matched.length - 2].name });
                     }

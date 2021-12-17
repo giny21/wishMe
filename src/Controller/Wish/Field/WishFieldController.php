@@ -11,6 +11,7 @@ use App\Security\Voter\Wish\Subscription\WishSubscriptionVoter;
 use App\Security\Voter\Wish\WishVoter;
 use App\Service\Wish\Field\WishFieldService;
 use App\Validator\Wish\Field\WishFieldValidator;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,10 +19,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class WishFieldController extends Controller
 {
     public function __construct(
+        SerializerInterface $serializer,
         private WishFieldValidator $wishFieldValidator,
         private WishFieldService $wishFieldService
     )
     {   
+        parent::__construct($serializer);
     }
 
     #[Route('/wish/{wish}/field/create', name: 'wish_field_create')]
@@ -42,7 +45,11 @@ class WishFieldController extends Controller
             $createWishField
         );
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->respond(
+            [
+                "wish" => $wish
+            ]
+        );
     }
 
     #[Route('/wish/{wish}/field/{wishField}/remove', name: 'wish_field_remove')]
@@ -53,8 +60,12 @@ class WishFieldController extends Controller
         $this->wishFieldService->remove(
             $wishField
         );
-        
-        return $this->redirect($request->headers->get('referer'));
+
+        return $this->respond(
+            [
+                "wish" => $wish
+            ]
+        );
     }
 
     #[Route('/wish/{wish}/field/{wishField}/important', name: 'wish_field_important')]
@@ -65,7 +76,11 @@ class WishFieldController extends Controller
         $this->wishFieldService->switchImportant(
             $wishField
         );
-        
-        return $this->redirect($request->headers->get('referer'));
+
+        return $this->respond(
+            [
+                "wish" => $wish
+            ]
+        );
     }
 }

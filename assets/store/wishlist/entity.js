@@ -19,6 +19,12 @@ class Wishlist extends Entity{
         return this.getOwner().id == user.id;
     }
 
+    isSubscriber(user){
+        if(!user) return false;
+
+        return Boolean(this.getSubscription(user));
+    }
+
     getOwner(){
         return this
             .subscriptions

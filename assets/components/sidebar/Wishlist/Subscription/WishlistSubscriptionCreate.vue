@@ -22,6 +22,7 @@
 </template>
 
 <script>
+// @todo: Validation, indicators
 import store from '../../../../store/store';
 import Wishlist from '../../../../store/wishlist/entity';
 import caller from '../../../../store/wishlist/caller';

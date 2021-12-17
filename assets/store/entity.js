@@ -1,6 +1,8 @@
 class Entity extends Object{
+    
     constructor(){
         super();
+        this.init = true;
     }
 
     edit(editArray){

@@ -1,6 +1,11 @@
 <template>
-    <router-link :to="'/list/add'" class="c-wishlist-add bg-success">
-        <i class="fas fa-plus"></i>
+    <router-link :to="'/list/create'" class="c-wishlist-add bg-success">
+        <span class="plus">
+            <i class="fas fa-plus"></i> 
+        </span>
+        <span class="icon">
+            <i class="fas fa-clipboard-list"></i>
+        </span>
     </router-link>
 </template>
 
@@ -16,16 +21,26 @@ export default {
 
 <style scoped>
     .c-wishlist-add{
-        width: 30px;
-        height: 50px;
+        width: 45px;
+        height: 65px;
         color: white;
         border-radius: 100px 0px 0px 100px;
-        font-size: 20px;
+        font-size: 17px;
         align-items: center;
-        justify-content: center;
+        padding-left: 5px;
         display: flex;
         cursor: pointer;
         background-color: #0d6efd;
         text-decoration: none;
+    }
+
+    .icon{
+        margin-top: 8px;
+        margin-left: -4px;
+    }
+
+    .plus{
+        margin-top: -15px;
+        font-size: 14px;
     }
 </style>

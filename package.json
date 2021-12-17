@@ -31,6 +31,7 @@
     },
     "dependencies": {
         "v-scroll-threshold": "^2.0.0",
+        "vue-select": "^3.16.0",
         "vue-sticky-directive": "^0.0.10"
     }
 }

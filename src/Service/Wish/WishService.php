@@ -27,32 +27,12 @@ class WishService
     {}
 
     /** @return Collection<Wish> */
-    public function getsOwned(User $user) : Collection
+    public function getsUser(User $user, int $page, int $sort, int $role) : Collection
     {
         return new ArrayCollection(
-            array_values(
-                array_filter(
-                    $this
-                        ->wishRepository
-                        ->findByUser($user),
-                    fn(Wish $wish) => $wish->isOwner($user)
-                )
-            )
-        );
-    }
-
-    /** @return Collection<Wish> */
-    public function getsSubscribed(User $user) : Collection
-    {
-        return new ArrayCollection(
-            array_values(
-                array_filter(
-                    $this
-                        ->wishRepository
-                        ->findByUser($user),
-                    fn(Wish $wish) => !$wish->isOwner($user)
-                )
-            )
+            $this
+                ->wishRepository
+                ->findByUserPerPage($user, $page, $sort, $role)
         );
     }
 
@@ -60,6 +40,7 @@ class WishService
     {
         $wish = $this->wishRepository->create(
             $createWish->getName(),
+            $createWish->getImportant(),
             new ArrayCollection($createWish->getWishlists())
         );
 
@@ -77,7 +58,7 @@ class WishService
             $wish,
             [
                 "name" => $editWish->getName(),
-                "important" => $editWish->getImportant() ?? false,
+                "important" => $editWish->getImportant(),
                 "wishlists" => new ArrayCollection($editWish->getWishlists())
             ]
         );

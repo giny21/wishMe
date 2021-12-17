@@ -14,6 +14,9 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
+use JMS\Serializer\Annotation\Exclude;
+use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\VirtualProperty;
 
 #[Entity(repositoryClass: WishlistRepository::class)]
 class Wishlist extends DoctrineEntity
@@ -24,7 +27,11 @@ class Wishlist extends DoctrineEntity
     #[Column(type: "boolean")]
     private bool $publicAvailable;
 
-    #[ManyToMany(mappedBy: "wishlists", targetEntity: Wish::class), OrderBy(["important" => "DESC", "id" => "DESC"])]
+    #[
+        ManyToMany(mappedBy: "wishlists", targetEntity: Wish::class), 
+        OrderBy(["id" => "DESC"]),
+        Exclude()
+    ]
     private Collection $wishes;
 
     #[OneToMany(mappedBy: "wishlist", targetEntity: WishlistSubscription::class)]
@@ -67,6 +74,16 @@ class Wishlist extends DoctrineEntity
     public function getWishes() : Collection
     {
         return $this->wishes;
+    }
+
+    #[VirtualProperty(), SerializedName("wishes")]
+    public function getWishesIds() : Collection
+    {
+        return $this
+            ->wishes
+            ->map(
+                fn(Wish $wish) => $wish->getId()
+            );
     }
 
     public function setWishes(Collection $wishes) : self

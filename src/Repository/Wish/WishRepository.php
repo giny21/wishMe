@@ -17,20 +17,26 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class WishRepository extends DoctrineRepository
 {
+    private CONST LIMIT_PER_PAGE = 20;
+
+    private CONST SORTS = [
+        ["wish.id", "DESC"]
+    ];
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Wish::class);
     }
 
     /** @param Collection<Wishlist> $wishlists */
-    public function create(string $name, Collection $wishlists) : Wish
+    public function create(string $name, bool $important, Collection $wishlists) : Wish
     {
         $wish = new Wish();
 
         $wish
             ->setName($name)
             ->setWishlists($wishlists)
-            ->setImportant(false)
+            ->setImportant($important)
             ->setFulfilled(false);
             
         $this->save($wish);
@@ -44,9 +50,31 @@ class WishRepository extends DoctrineRepository
             ->createQueryBuilder('wish')
             ->leftJoin('wish.subscriptions', 'wishSubscription')
             ->where('wishSubscription.user = :userId')
-            ->addOrderBy('wish.important', 'DESC')
             ->addOrderBy('wish.id', 'DESC')
             ->setParameter('userId', $user->getId())
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByUserPerPage(User $user, int $page, int $sort, int $role) : array
+    {
+        $query = $this
+            ->createQueryBuilder('wish')
+            ->leftJoin('wish.subscriptions', 'wishSubscription')
+            ->where('wishSubscription.user = :userId')
+            ->setParameter('userId', $user->getId());
+
+        if($role)
+            $query
+                ->leftJoin('wish.wishlists', 'wishlist')
+                ->leftJoin('wishlist.subscriptions', 'wishlistSubscription')
+                ->andWhere('wishlistSubscription.role = :role')
+                ->setParameter('role', $role);
+
+        return $query
+            ->addOrderBy(...self::SORTS[$sort])
+            ->setFirstResult($page * self::LIMIT_PER_PAGE)
+            ->setMaxResults(self::LIMIT_PER_PAGE)
             ->getQuery()
             ->getResult();
     }

@@ -7,6 +7,7 @@ use App\Entity\Wishlist\Subscription\WishlistSubscription;
 use App\Entity\Wishlist\Wishlist;
 use App\Model\Wishlist\Action\CreateWishlist;
 use App\Model\Wishlist\Action\EditWishlist;
+use App\Model\Wishlist\Action\SearchWishlist;
 use App\Model\Wishlist\Action\Subscription\CreateWishlistSubscription;
 use App\Repository\Wishlist\WishlistRepository;
 use App\Service\Wishlist\Subscription\WishlistSubscriptionService;
@@ -31,6 +32,15 @@ class WishlistService
             $this
                 ->wishlistRepository
                 ->finds($ids)
+        );
+    }
+
+    public function search(User $user, SearchWishlist $searchWishlist) : Collection
+    {
+        return new ArrayCollection(
+            $this
+                ->wishlistRepository
+                ->findByUserAndSearchOptions($user, $searchWishlist)
         );
     }
 
@@ -65,12 +75,12 @@ class WishlistService
     }
 
     /** @return Collection<Wishlist> */
-    public function getsUser(User $user) : Collection
+    public function getsUser(User $user, int $page, int $sort, int $role) : Collection
     {
         return new ArrayCollection(
             $this
                 ->wishlistRepository
-                ->findByUser($user)
+                ->findByUserPerPage($user, $page, $sort, $role)
         );
     }
 

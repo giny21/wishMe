@@ -10,6 +10,7 @@ use App\Security\Voter\Wish\Subscription\WishSubscriptionVoter;
 use App\Security\Voter\Wish\WishVoter;
 use App\Service\Wish\Subscription\WishSubscriptionService;
 use App\Validator\Wish\Subscription\WishSubscriptionValidator;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,10 +18,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class WishSubscriptionController extends Controller
 {
     public function __construct(
+        SerializerInterface $serializer,
         private WishSubscriptionValidator $wishSubscriptionValidator,
         private WishSubscriptionService $wishSubscriptionService
     )
     {   
+        parent::__construct($serializer);
     }
 
     #[Route('/wish/{wish}/subscription/create', name: 'wish_subscription_create')]
@@ -36,7 +39,11 @@ class WishSubscriptionController extends Controller
             $user
         );
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->respond(
+            [
+                "wish" => $wish
+            ]
+        );
     }
 
     #[Route('/wish/{wish}/subscription/{wishSubscription}/remove', name: 'wish_subscription_remove')]
@@ -48,6 +55,10 @@ class WishSubscriptionController extends Controller
             $wishSubscription
         );
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->respond(
+            [
+                "wish" => $wish
+            ]
+        );
     }
 }

@@ -7,10 +7,18 @@ import SignIn from './pages/Landing/SignIn/SignIn.vue';
 import SignUp from './pages/Landing/SignUp/SignUp.vue';
 import Landing from './pages/Landing/Landing.vue';
 import Dashboard from './pages/Dashboard/Dashboard.vue';
-import Wishlists from './pages/Dashboard/Wishlists/Wishlists.vue'
-import WishlistAdd from './pages/Dashboard/Wishlists/Add/Add.vue'
-import WishlistEdit from './pages/Dashboard/Wishlists/Edit/Edit.vue'
-import WishlistSubscriptions from './pages/Dashboard/Wishlists/Subscriptions/Subscriptions.vue'
+import Wishlists from './pages/Dashboard/Wishlists/Wishlists.vue';
+import WishlistCreate from './pages/Dashboard/Wishlists/Create/Create.vue';
+import WishlistEdit from './pages/Dashboard/Wishlists/Edit/Edit.vue';
+import WishlistWishCreate from './pages/Dashboard/Wishlist/Wish/Create/Create.vue';
+import WishlistSubscriptions from './pages/Dashboard/Wishlists/Subscriptions/Subscriptions.vue';
+import Wishlist from './pages/Dashboard/Wishlist/Wishlist.vue';
+import Wishes from './pages/Dashboard/Wishes/Wishes.vue';
+import WishEdit from './pages/Dashboard/Wishes/Edit/Edit.vue';
+import WishCreate from './pages/Dashboard/Wishes/Create/Create.vue';
+import WishFields from './pages/Dashboard/Wishes/Fields/Fields.vue';
+import WishLinks from './pages/Dashboard/Wishes/Links/Links.vue';
+import WishSubscriptions from './pages/Dashboard/Wishes/Subscriptions/Subscriptions.vue';
 
 const routes = [
   { 
@@ -39,16 +47,16 @@ const routes = [
     children: [
       {
         path: '/list',
-        name: 'Wishlist',
+        name: 'Wishlists',
         component: Wishlists,
         meta: { 
           requireAuth: true 
         },
         children: [
           {
-            path: 'add',
-            name: 'WishlistAdd',
-            component: WishlistAdd,
+            path: 'create',
+            name: 'WishlistCreate',
+            component: WishlistCreate,
             meta: { 
               requireAuth: true 
             },
@@ -71,6 +79,71 @@ const routes = [
           }
         ]
       },
+      {
+        path: '/list/:id',
+        name: 'Wishlist',
+        component: Wishlist,
+        children: [
+          {
+            path: 'wish/create',
+            name: 'WishlistWishCreate',
+            component: WishlistWishCreate,
+            meta: { 
+              requireAuth: true 
+            },
+          }
+        ]
+      },
+      {
+        path: '/wish',
+        name: 'Wishes',
+        component: Wishes,
+        meta: { 
+          requireAuth: true 
+        },
+        children: [
+          {
+            path: 'create',
+            name: 'WishCreate',
+            component: WishCreate,
+            meta: { 
+              requireAuth: true 
+            },
+          },
+          {
+            path: ':id/edit',
+            name: 'WishEdit',
+            component: WishEdit,
+            meta: { 
+              requireAuth: true 
+            },
+          },
+          {
+            path: ':id/field',
+            name: 'WishField',
+            component: WishFields,
+            meta: { 
+              requireAuth: true 
+            },
+          },
+          {
+            path: ':id/link',
+            name: 'WishLink',
+            component: WishLinks,
+            meta: { 
+              requireAuth: true 
+            },
+          },
+          {
+            path: ':id/subscription',
+            name: 'WishSubscription',
+            component: WishSubscriptions,
+            meta: { 
+              requireAuth: true 
+            },
+          }
+        ]
+      }
     ]
   }
 ];

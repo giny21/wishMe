@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
+use JMS\Serializer\Annotation\VirtualProperty;
 
 #[Entity(repositoryClass: WishRepository::class)]
 class Wish extends DoctrineEntity

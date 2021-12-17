@@ -1,7 +1,7 @@
 <template>
     <div class="p-wishlists">
-        <div class="col-12 d-flex flex-row flex-wrap wishlists-wrapper" v-if="store.wishlistsInitiated">
-            <wishlist v-for="wishlist in store.wishlists" :key="wishlist.id" :wishlist="wishlist"></wishlist>    
+        <div class="col-12 d-flex flex-row flex-wrap wishlists-wrapper" v-if="subscribedWishlists">
+            <wishlist v-for="wishlist in subscribedWishlists" :key="wishlist.id" :wishlist="wishlist"></wishlist>    
         </div>
         <div class="col-12 d-flex justify-content-center align-items-center mt-4" v-else>
             <b-spinner variant="primary" label="Spinning"></b-spinner>
@@ -23,6 +23,7 @@
     import { BSpinner } from 'bootstrap-vue';
     import ActionbarLayout from '../../../layouts/Actionbar.vue';
     import WishlistAdd from '../../../components/actionbar/Wishlist/WishlistAdd.vue';
+    import caller from '../../../store/wishlist/caller.js';
 
     export default {
         components: {  
@@ -33,8 +34,29 @@
         },
         data(){
             return {
-                store: store.state,
-                sidebarShow: false
+                store: store.state
+            }
+        },
+        created: function(){
+            caller
+            .getsPageIds(0, 0, 0)
+            .then(
+                response => response
+                    .data
+                    .wishlists
+                    .map(
+                        id => store.get('wishlists', id)
+                    )
+            )
+        },
+        computed: {
+            subscribedWishlists: function(){
+                return this
+                .store
+                .wishlists
+                .filter(
+                    (wishlist) => wishlist.init && wishlist.isSubscriber(this.store.user)
+                );
             }
         }
     }

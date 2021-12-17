@@ -41,9 +41,6 @@ const app = new Vue(
                 state: {},
                 store: store.state
             }
-        },
-        mounted(){
-            store.init();
         }
     }
 ).$mount("#app");

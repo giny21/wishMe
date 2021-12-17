@@ -10,8 +10,8 @@
             </span>
         </div>
         <div>
-            <router-link :to="'/list/' + wishlist.id + '/edit'" v-on:click="sidebarShow = true">
-                <i class="fas fa-pen" v-if="wishlist.isOwner(store.user)"></i>
+            <router-link :to="'/list/' + wishlist.id + '/edit'" v-if="wishlist.isOwner(store.user)">
+                <i class="fas fa-pen"></i>
             </router-link>
         </div>
     </div>
@@ -40,13 +40,16 @@
         </div>
     </header>
     <content>
-        <div class="element">
+        <router-link 
+            :to="'/list/' + wishlist.id"
+            class="element" 
+        >
             <span class="counter">
                 {{wishlist.wishes.length > 9 ? "9+" : wishlist.wishes.length}}
             </span>
             <i class="fas fa-gift"></i>
             <p class="element-title">Życzenia</p>
-        </div>
+        </router-link>
 
         <router-link 
             :to="'/list/' + wishlist.id + '/subscription'"
@@ -73,8 +76,7 @@ export default {
     },
     data(){
         return {
-            store: store.state,
-            sidebarShow: false
+            store: store.state
         }
     },
     methods:{
@@ -129,7 +131,6 @@ export default {
         white-space: nowrap; 
         overflow: hidden; 
         text-overflow: ellipsis; 
-        max-width: 90px;
         margin: 2px;
     }
 

@@ -12,6 +12,7 @@ use App\Service\Wish\WishService;
 use App\Service\Wishlist\WishlistService;
 use App\Validator\Wish\WishValidator;
 use Exception;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,36 +20,42 @@ use Symfony\Component\Routing\Annotation\Route;
 class WishController extends Controller
 {
     public function __construct(
+        SerializerInterface $serializer,
         private WishValidator $wishValidator,
         private WishService $wishService,
         private WishlistService $wishlistService
     )
     {   
+        parent::__construct($serializer);
     }
 
-    #[Route('/wish/my', name: 'wish_show_my')]
-    public function showOwned(): Response
+    #[Route('/wish/{wish}', name: 'wish_show', requirements: ['wish' => '\d+'])]
+    public function show(Wish $wish): Response
     {
         $user = $this->getUser();
 
-        return $this->render('wish/list.html.twig', [
-            'controller_name' => 'WishController',
-            'pageTitle' => "Moje życzenia", //@todo Translation
-            'wishes' => $this->wishService->getsOwned($user)->toArray(),
-            'wishlists' => $this->wishlistService->getsOwned($user)
-        ]);
+        return $this->respond(
+            [
+                "wish" => $wish
+            ]
+        );
     }
-
-    #[Route('/wish/friend', name: 'wish_show_friend')]
-    public function showSubscribed(): Response
+    
+    #[Route('/wish/page/{page}/{sort}/{role}', name: 'wish_get_ids_by_page')]
+    public function getIdsByPage(?int $page = 0, ?int $sort = 0, ?int $role = 0): Response
     {
         $user = $this->getUser();
 
-        return $this->render('wish/list.html.twig', [
-            'controller_name' => 'WishController',
-            'pageTitle' => "Życzenia znajomych", //@todo Translation
-            'wishes' => $this->wishService->getsSubscribed($user),
-        ]);
+        return $this->respond(
+            [
+                "wishes" => $this
+                    ->wishService
+                    ->getsUser($user, $page, $sort, $role)
+                    ->map(
+                        fn(Wish $wish) => $wish->getId()
+                    )
+            ]
+        );
     }
 
     #[Route('/wish/{wish}/remove', name: 'wish_remove', requirements: ['wish' => '\d+'])]
@@ -60,7 +67,7 @@ class WishController extends Controller
             $wish
         );
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->respond();
     }
 
     #[Route('/wish/create', name: 'wish_create')]
@@ -69,25 +76,26 @@ class WishController extends Controller
         /** @var CreateWish */
         $createWish = $this->deserialize(
             $request,
-            CreateWish::class,
-            [
-                'wishlists' => fn(array $ids) => $this->wishlistService->gets($ids)->toArray()
-            ]
+            CreateWish::class
         );
         $this->wishValidator->validateCreate($createWish);
         
         foreach($createWish->getWishlists() as $wishlist)
             $this->denyAccessUnlessGranted(WishlistVoter::ACTION_EDIT, $wishlist);
 
-        $this->wishService->create(
+        $wish = $this->wishService->create(
             $createWish,
             $this->getUser()
         );
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->respond(
+            [
+                "wish" => $wish
+            ]
+        );
     }
 
-    #[Route('/wish/edit/{wish}', name: 'wish_edit')]
+    #[Route('/wish/{wish}/edit', name: 'wish_edit')]
     public function edit(Wish $wish, Request $request): Response
     {
         $this->denyAccessUnlessGranted(WishVoter::ACTION_EDIT, $wish);
@@ -95,10 +103,7 @@ class WishController extends Controller
         /** @var EditWish */
         $editWish = $this->deserialize(
             $request,
-            EditWish::class,
-            [
-                'wishlists' => fn(array $ids) => $this->wishlistService->gets($ids)->toArray()
-            ]
+            EditWish::class
         );
         $this->wishValidator->validateEdit($editWish);
         
@@ -110,7 +115,11 @@ class WishController extends Controller
             $editWish
         );
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->respond(
+            [
+                'wish' => $wish
+            ]
+        );
     }
 
     #[Route('/wish/{wish}/fulfilled', name: 'wish_fulfilled_switch', requirements: ['wish' => '\d+'])]
@@ -121,6 +130,6 @@ class WishController extends Controller
 
         $this->wishService->switchFulfilled($wish);
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->respond();
     }
 }

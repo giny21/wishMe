@@ -10,7 +10,7 @@ use Symfony\Component\Validator\ConstraintViolationList;
 
 class WishSubscriptionValidator extends Validator
 {
-    private CONST VIOLATION_USER_ALREADY_SUBSCRIBE = "User already subscribe this wishlist";
+    private CONST VIOLATION_USER_ALREADY_SUBSCRIBE = "User already subscribe this wish";
     private CONST VIOLATION_WISH_ALREADY_FULFILLED = "Wish already fulfilled";
 
     public function validateCreate(User $user, Wish $wish) : void

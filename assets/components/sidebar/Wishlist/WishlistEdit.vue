@@ -1,5 +1,5 @@
 <template>
-<div class="c-wishlist-edit" v-if="wishlist" >
+<div class="c-wishlist-edit" v-if="wishlist.init" >
     <form 
         @submit="submit"
     >
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+    // @todo: Validation, indicators
     import store from '../../../store/store';
     import caller from '../../../store/wishlist/caller';
     import Wishlist from '../../../store/wishlist/entity';
@@ -60,6 +61,9 @@
                     () => {
                         this.wishlist.edit(this.editArray);
                         store.update('wishlists', this.wishlist.id, this.wishlist); 
+
+                        for(const wishlistWish of this.wishlist.wishes)
+                            store.refresh('wishes', wishlistWish.id);
                     }
                 )
                 e.preventDefault();

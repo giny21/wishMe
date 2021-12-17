@@ -2,29 +2,6 @@ import axios from "axios";
 import Wishlist from "./entity";
 
 const calls = {
-    async fetchAll(){
-        if(user){
-            return axios
-                .get("/list")
-                .then(
-                    response => 
-                    response
-                    .data
-                    .wishlists
-                    .map(
-                        (wishlistJson) => new Wishlist(wishlistJson)
-                    )
-                )
-                .catch(
-                    error => {
-                        console.log(error);
-                        return [];
-                    }
-                );
-        }
-        else return new Promise(() => []);
-    },
-
     async fetch(id){
         return axios
             .get("/list/"+id)
@@ -39,6 +16,33 @@ const calls = {
             );
     },
 
+    async getsPageIds(page, sort, role){
+        return axios
+            .get("/list/page/" + page + "/" + sort + "/" + role);
+    },
+
+    async search(params){
+        return axios
+        .post(
+            "/list/search",
+            JSON.stringify(params)
+        )
+        .then(
+            response => response
+                .data
+                .wishlists
+                .map(
+                    wishlist => new Wishlist(wishlist)
+                )
+        )
+        .catch(
+            error => {
+                console.log(error);
+                return null;
+            }
+        );
+    },
+
     async switchFavorite(id){
         return axios
             .get("/list/"+id+"/favorite"); 
@@ -49,7 +53,10 @@ const calls = {
             .post(
                 "/list/"+id+"/edit",
                 JSON.stringify(editArray)
-        );
+            )
+            .then(
+                response => new Wishlist(response.data.wishlist)
+            );
     },
 
     async remove(id){

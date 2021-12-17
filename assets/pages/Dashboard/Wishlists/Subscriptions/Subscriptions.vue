@@ -1,6 +1,6 @@
 <template>
     <sidebar-layout>
-        <content v-if="store.wishlistsInitiated">
+        <content v-if="wishlist && wishlist.init">
             <h6>Znajomi z listy {{wishlist.name}}</h6>
             <div class="overflow">
                 <wishlist-subscription 
@@ -42,7 +42,8 @@
 
         computed: {
             wishlist: function(){
-                return store.get('wishlists', this.$route.params.id);
+                let id = Number(this.$route.params.id);
+                return store.get('wishlists', id);
             }
         }
     }

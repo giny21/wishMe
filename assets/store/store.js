@@ -1,4 +1,5 @@
 import wishlistCaller from "./wishlist/caller";
+import wishCaller from "./wish/caller";
 
 const store = {
     debug: true,
@@ -6,35 +7,25 @@ const store = {
     state: {
         user: user,
         wishlists: [],
-        wishlistsInitiated: false,
-        wishes: [],
-        messages: [],
+        wishes: []
         
     },
 
     callers: {
-        wishlists: wishlistCaller
-    },
-
-    init() {
-        this
-        .callers
-        .wishlists
-        .fetchAll()
-        .then(
-            wishlists => {
-                this.updates("wishlists", wishlists);
-                this.updates("wishlistsInitiated", true);
-            }
-        );
+        wishlists: wishlistCaller,
+        wishes: wishCaller
     },
 
     get(field, id) {
-        for(const value of this.state[field]){
-            if(value.id == id)
-                return value;
+        if(!this.contains(field, id)){
+            this.add(field, {'id': id, init: false});
+            this.refresh(field, id);
         }
 
+        return this.find(field, id);
+    },
+
+    refresh(field, id){
         this
         .callers[field]
         .fetch(id)
@@ -44,8 +35,19 @@ const store = {
             }
         );
     },
+
+    find(field, id){
+        for(const value of this.state[field]){
+            if(value.id == id)
+                return value;
+        }
+    },
+
+    contains(field, id){
+        return Boolean(this.find(field, id));
+    },
   
-    updates(field, values) {
+    set(field, values) {
         if (this.debug) 
             console.log('Set ' + field + ' triggered with', values);
   
@@ -54,7 +56,7 @@ const store = {
 
     update(field, id, value){
         if(this.debug)
-            console.log('Set single entity with id ' + id + ' of ' + field + ' triggered with ', value);
+            console.log('Update single entity with id ' + id + ' of ' + field + ' triggered with ', value);
 
         this.state[field] = this
             .state[field]
@@ -68,13 +70,24 @@ const store = {
             );
     },
 
-    add(field, value){
-        if(this.debug)
-            console.log('Add single entity with to ' + field + ' triggered with ', value);
+    updates(field, values){
+        for(const value of values)
+            this.update(field, value.id, value);
+    },
 
-        let values = this.state[field];
-        values.push(value);
-        this.state[field] = values;
+    add(field, value){
+        if(this.contains(field, value.id)){
+            if(!this.find(field, value.id).init)
+                this.update(field, value.id, value);
+        }
+        else{
+            if(this.debug)
+                console.log('Add single entity with id ' + value.id + ' to ' + field + ' triggered with ', value);
+    
+            let values = this.state[field];
+            values.push(value);
+            this.state[field] = values;
+        }
     },
 
     remove(field, value){
