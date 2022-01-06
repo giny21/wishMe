@@ -12,11 +12,13 @@
             <wish-field-remove 
                 :wish="wish" 
                 :field="field"
+                :owner="owner"
             >
             </wish-field-remove>
             <wish-field-switch-important
                 :wish="wish" 
                 :field="field"
+                :owner="owner"
             >
             </wish-field-switch-important>
         </div>
@@ -37,7 +39,8 @@ export default {
 
     props: {
         wish: Wish,
-        field: Object
+        field: Object,
+        owner: Object
     },
 
     data(){

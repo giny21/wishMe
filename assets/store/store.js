@@ -31,7 +31,7 @@ const store = {
         .fetch(id)
         .then(
             value => {
-                this.update(field, id, value);
+                this.add(field, value);
             }
         );
     },

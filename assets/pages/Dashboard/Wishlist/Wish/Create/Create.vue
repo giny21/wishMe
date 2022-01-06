@@ -28,7 +28,7 @@
         
         computed: {
             wishlist: function(){
-                return store.get('wishlists', this.$route.params.id)
+                return store.get('wishlists', this.$route.params.wish)
             }
         }
     }

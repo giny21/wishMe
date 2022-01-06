@@ -97,11 +97,17 @@
                     (response) => {
                         let wish = new Wish(response.data.wish);
                         store.add('wishes', wish); 
+                        
+                        for(const wishlistId of wish.wishlists){
+                            let wishlist = store.get('wishlists', wishlistId);
+                            if(wishlist.init){
+                                wishlist.wishes.push(wish.id);
+                                store.update('wishlists', wishlist.id, wishlist);
+                            }
+                        }
+                        
                         let matched = this.$route.matched;
                         this.$router.push({ name: matched[matched.length - 2].name });
-                        
-                        for(const wishWishlist of wish.wishlists)
-                            store.refresh('wishlists', wishWishlist.id);
                     }
                 )
                 e.preventDefault();

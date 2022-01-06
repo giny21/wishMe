@@ -62,7 +62,7 @@ const routes = [
             },
           },
           {
-            path: ':id/edit',
+            path: ':wishlist/edit',
             name: 'WishlistEdit',
             component: WishlistEdit,
             meta: { 
@@ -70,7 +70,7 @@ const routes = [
             },
           },
           {
-            path: ':id/subscription',
+            path: ':wishlist/subscription',
             name: 'WishlistSubscription',
             component: WishlistSubscriptions,
             meta: { 
@@ -80,7 +80,7 @@ const routes = [
         ]
       },
       {
-        path: '/list/:id',
+        path: '/list/:wishlist',
         name: 'Wishlist',
         component: Wishlist,
         children: [
@@ -88,6 +88,38 @@ const routes = [
             path: 'wish/create',
             name: 'WishlistWishCreate',
             component: WishlistWishCreate,
+            meta: { 
+              requireAuth: true 
+            },
+          },
+          {
+            path: 'wish/:wish/edit',
+            name: 'WishlistWishEdit',
+            component: WishEdit,
+            meta: { 
+              requireAuth: true 
+            },
+          },
+          {
+            path: 'wish/:wish/field',
+            name: 'WishlistWishField',
+            component: WishFields,
+            meta: { 
+              requireAuth: true 
+            },
+          },
+          {
+            path: 'wish/:wish/link',
+            name: 'WishlistWishLink',
+            component: WishLinks,
+            meta: { 
+              requireAuth: true 
+            },
+          },
+          {
+            path: 'wish/:wish/subscription',
+            name: 'WishlistWishSubscription',
+            component: WishSubscriptions,
             meta: { 
               requireAuth: true 
             },
@@ -111,7 +143,7 @@ const routes = [
             },
           },
           {
-            path: ':id/edit',
+            path: ':wish/edit',
             name: 'WishEdit',
             component: WishEdit,
             meta: { 
@@ -119,7 +151,7 @@ const routes = [
             },
           },
           {
-            path: ':id/field',
+            path: ':wish/field',
             name: 'WishField',
             component: WishFields,
             meta: { 
@@ -127,7 +159,7 @@ const routes = [
             },
           },
           {
-            path: ':id/link',
+            path: ':wish/link',
             name: 'WishLink',
             component: WishLinks,
             meta: { 
@@ -135,7 +167,7 @@ const routes = [
             },
           },
           {
-            path: ':id/subscription',
+            path: ':wish/subscription',
             name: 'WishSubscription',
             component: WishSubscriptions,
             meta: { 

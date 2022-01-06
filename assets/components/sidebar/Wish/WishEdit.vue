@@ -1,5 +1,5 @@
 <template>
-<div class="c-wish-edit">
+<div class="c-wish-edit" v-if="wishlistsReady">
     <form 
         @submit="submit"
     >
@@ -19,11 +19,11 @@
             <input 
                 class="form-check-input" 
                 type="checkbox" 
-                id="publicAvailable" 
-                name="publicAvailable"
+                id="important" 
+                name="important"
                 v-model="editArray.important"
             >
-            <label class="form-check-label" for="publicAvailable">
+            <label class="form-check-label" for="important">
                 Jest ważne
             </label>
         </div>
@@ -32,7 +32,7 @@
             <v-select 
                 multiple  
                 @search="fetchOptions"
-                :options="wishlists"
+                :options="options"
                 label="name"
                 v-model="editArray.wishlists"
                 append-to-body
@@ -71,26 +71,52 @@
                 editArray: {
                     name: this.wish.name,
                     important: this.wish.important,
-                    wishlists: this.wish.wishlists
+                    wishlists: []
                 },
-                wishlists: []
+                options: []
             }
         },
 
-        methods:{
+        computed: {
+            wishlistsReady: function(){
+                let wishlists = [];
+
+                for(const wishlistId of this.wish.wishlists){
+                    let wishlist = store.get('wishlists', wishlistId);
+                    if(!wishlist.init)
+                        return false;
+                    wishlists.push(wishlist);
+                }
+
+                this.editArray.wishlists = wishlists;
+
+                return true;
+            }
+        },
+
+        methods: {
             submit(e){
                 wishCaller
                 .edit(this.wish.id, this.editArray)
                 .then(
-                    () => {
-                        for(const wishWishlist of this.wish.wishlists)
-                            store.refresh('wishlists', wishWishlist.id);
-                            
-                        this.wish.edit(this.editArray);
-                        store.update('wishes', this.wish.id, this.wish); 
+                    wish => {
+                        for(const wishlistId of this.wish.wishlists){
+                            let wishlist = store.get('wishlists', wishlistId);
+                            if(wishlist.init){
+                                wishlist.wishes = wishlist.wishes.filter( id => this.wish.id != id);
+                                store.update('wishlists', wishlist.id, wishlist);
+                            }
+                        }
 
-                        for(const wishWishlist of this.wish.wishlists)
-                            store.refresh('wishlists', wishWishlist.id);
+                        store.update('wishes', wish.id, wish);
+                        
+                        for(const wishlistId of wish.wishlists){
+                            let wishlist = store.get('wishlists', wishlistId);
+                            if(wishlist.init){
+                                wishlist.wishes.push(wish.id);
+                                store.update('wishlists', wishlist.id, wishlist);
+                            }
+                        }
                     }
                 )
                 e.preventDefault();
@@ -137,7 +163,7 @@
                 )
                 .then(
                     wishlists => {
-                        this.wishlists = wishlists;
+                        this.options = wishlists;
                         loading(false);
                     }
                 );

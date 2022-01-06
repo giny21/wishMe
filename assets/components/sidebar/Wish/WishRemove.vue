@@ -24,14 +24,20 @@
         },
 
         methods: {
-            remove(){
+            remove(){ 
+                for(const wishlistId of this.wish.wishlists){
+                    let wishlist = store.get('wishlists', wishlistId);
+                    if(wishlist.init){
+                        wishlist.wishes = wishlist.wishes.filter( id => this.wish.id != id);
+                        store.update('wishlists', wishlist.id, wishlist);
+                    }
+                }
+
                 caller.remove(this.wish.id);
                 store.remove('wishes', this.wish);
+
                 let matched = this.$route.matched;
                 this.$router.push({ name: matched[matched.length - 2].name });
-
-                for(const wishWishlist of this.wish.wishlists)
-                    store.refresh('wishlists', wishWishlist.id);
             }
         }
     }

@@ -1,7 +1,12 @@
 <template>
     <div class="p-wishlist">
-        <div class="col-12 d-flex flex-row flex-wrap wishlist-wrapper" v-if="wishlist && wishlist.init">
-            <wish v-for="wishId in wishlist.wishes" :key="wishId" :id="wishId"></wish>    
+        <div class="col-12 wishlist-wrapper" v-if="wishlist && wishlist.init">
+            <div class="title d-flex flex-row flex-wrap">
+                <h4>{{wishlist.name}}</h4>
+            </div>
+            <div class="wishes d-flex flex-row flex-wrap">
+                <wish v-for="wish in wishes" :key="wish.id" :wish="wish"></wish>    
+            </div>
         </div>
         <div class="col-12 d-flex justify-content-center align-items-center mt-4" v-else>
             <b-spinner variant="primary" label="Spinning"></b-spinner>
@@ -38,8 +43,16 @@
         },
         computed: {
             wishlist: function(){
-                let id = Number(this.$route.params.id);
+                let id = Number(this.$route.params.wishlist);
                 return store.get('wishlists', id)
+            },
+            wishes: function(){
+                return this
+                    .wishlist
+                    .wishes
+                    .map(
+                        wishId => store.get('wishes', wishId)
+                    );
             }
         }
     }
@@ -49,6 +62,21 @@
     .p-wishlist{
         position: relative;
         min-height: calc(100vh - 105px);
+    }
+
+    .title{
+        width: 100vw;
+        align-items: center;
+        justify-content: center;
+        padding-top: 15px;
+    }
+
+    .title h4{
+        background-color: #e3f2fd;
+        padding: 5px 25px;
+        border-radius: 12px;
+        border: 1px dotted gray;
+        color: darkslategray;
     }
 
     .wishlist-wrapper

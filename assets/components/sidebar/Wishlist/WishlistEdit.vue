@@ -62,8 +62,8 @@
                         this.wishlist.edit(this.editArray);
                         store.update('wishlists', this.wishlist.id, this.wishlist); 
 
-                        for(const wishlistWish of this.wishlist.wishes)
-                            store.refresh('wishes', wishlistWish.id);
+                        for(const wishlistWishId of this.wishlist.wishes)
+                            store.refresh('wishes', wishlistWishId);
                     }
                 )
                 e.preventDefault();

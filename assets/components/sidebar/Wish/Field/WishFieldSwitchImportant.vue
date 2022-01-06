@@ -21,7 +21,8 @@ import caller from '../../../../store/wish/caller';
 export default {
     props: {
         wish: Wish,
-        field: Object
+        field: Object,
+        owner: Object
     },
 
     data(){
@@ -43,7 +44,7 @@ export default {
         },
 
         canSwitchImportant(){
-            return this.wish.isOwner(this.store.user);
+            return this.owner ? this.owner.id == this.store.user.id : false;
         },
     }
 }

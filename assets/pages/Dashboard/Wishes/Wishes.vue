@@ -1,7 +1,7 @@
 <template>
     <div class="p-wishes">
         <div class="col-12 d-flex flex-row flex-wrap wishes-wrapper" v-if="subscribedWishes">
-            <wish v-for="wish in subscribedWishes" :key="wish.id" :id="wish.id"></wish>    
+            <wish v-for="wish in subscribedWishes" :key="wish.id" :wish="wish"></wish>    
         </div>
         <div class="col-12 d-flex justify-content-center align-items-center mt-4" v-else>
             <b-spinner variant="primary" label="Spinning"></b-spinner>

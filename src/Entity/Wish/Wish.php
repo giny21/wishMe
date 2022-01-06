@@ -16,6 +16,8 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
+use JMS\Serializer\Annotation\Exclude;
+use JMS\Serializer\Annotation\SerializedName;
 use JMS\Serializer\Annotation\VirtualProperty;
 
 #[Entity(repositoryClass: WishRepository::class)]
@@ -30,7 +32,10 @@ class Wish extends DoctrineEntity
     #[Column(type: "boolean")]
     private bool $fulfilled;
 
-    #[ManyToMany(inversedBy: "wishes", targetEntity: Wishlist::class)]
+    #[
+        ManyToMany(inversedBy: "wishes", targetEntity: Wishlist::class),
+        Exclude()
+    ]
     private Collection $wishlists;
 
     #[OneToMany(mappedBy: "wish", targetEntity: WishLink::class)]
@@ -202,5 +207,15 @@ class Wish extends DoctrineEntity
         }
 
         return $this->wishlists->count() === 0;
+    }
+
+    #[VirtualProperty(), SerializedName("wishlists")]
+    public function getWishlistsIds() : Collection
+    {
+        return $this
+            ->wishlists
+            ->map(
+                fn(Wishlist $wishlist) => $wishlist->getId()
+            );
     }
 }

@@ -1,5 +1,5 @@
 <template>
-    <div class="c-wish-subscription" v-if="!wish.isOwner(subscription.user)">
+    <div class="c-wish-subscription" v-if="!isOwner()">
         <div>
             <span>
                 {{subscription.user.email}}
@@ -27,12 +27,19 @@ export default {
 
     props: {
         wish: Wish,
-        subscription: Object
+        subscription: Object,
+        owner: Object
     },
 
     data(){
         return {
             store: store.state
+        }
+    },
+
+    methods: {
+        isOwner: function(){
+            return this.owner && this.owner.id === this.subscription.user.id;
         }
     }
 }

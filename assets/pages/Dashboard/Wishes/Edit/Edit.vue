@@ -38,7 +38,7 @@
 
         computed: {
             wish: function(){
-                let id = Number(this.$route.params.id);
+                let id = Number(this.$route.params.wish);
                 return store.get('wishes', id);
             }
         }

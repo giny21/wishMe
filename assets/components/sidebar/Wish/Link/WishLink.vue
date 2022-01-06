@@ -9,6 +9,7 @@
             <wish-link-remove 
                 :wish="wish" 
                 :link="link"
+                :owner="owner"
             >
             </wish-link-remove>
         </div>
@@ -27,7 +28,8 @@ export default {
 
     props: {
         wish: Wish,
-        link: Object
+        link: Object,
+        owner: Object
     },
 
     data(){

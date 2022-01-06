@@ -4,8 +4,7 @@
         v-on:click="remove"
         v-if="canRemove()" 
     >
-        <i class="fas fa-user-slash" v-if="wish.isOwner(store.user)"></i>
-        <i class="fas fa-sign-out-alt" v-else></i>
+        <i class="fas fa-sign-out-alt"></i>
     </span>
 </template>
 
@@ -39,15 +38,8 @@ export default {
         },
 
         canRemove(){
-            if(this.wish.isOwner(this.store.user)){
-                if(this.subscription.user.id != this.store.user.id)
-                    return true; 
-            }
-            else{
-                if(this.subscription.user.id == this.store.user.id)
-                    return true;
-            }
-            return false;
+            if(this.subscription.user.id == this.store.user.id)
+                return true;
         },
     }
 }

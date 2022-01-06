@@ -144,6 +144,10 @@ class WishlistController extends Controller
             $this->getUser()
         );
 
-        return $this->respond();
+        return $this->respond(
+            [
+                'wishlist' => $wishlist
+            ]
+        );
     }
 }

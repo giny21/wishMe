@@ -8,7 +8,7 @@
                 </span>
             </div>
             <div>
-                <router-link :to="'/wish/' + wish.id + '/edit'" v-if="wish.isOwner(store.user)">
+                <router-link :to="sidebarUrl('edit')" v-if="isOwner">
                     <i class="fas fa-pen"></i>
                 </router-link>
             </div>
@@ -16,7 +16,7 @@
         <header>
             <div class="h6">
                 {{wish.name}}
-                <span class="clickable" v-on:click="switchFulfilled" v-if="!wish.isOwner(store.user)">
+                <span class="clickable" v-on:click="switchFulfilled" v-if="!isOwner">
                     <span v-if="wish.fulfilled" key="fulfilled">
                         <i class="fas fa-check-circle"></i>
                     </span>
@@ -26,30 +26,30 @@
                 </span>
             </div>
             <div class="d-inline-flex justify-content-center m-1">
-                <div v-if="wish.isOwner(store.user)">
+                <div v-if="isOwner">
                     <label 
                         class="badge bg-primary" 
-                        v-for="wishlist in wish.wishlists"
+                        v-for="wishlist in wishlists"
                         :key="wishlist.id"
                     >
                         <i class="fas fa-clipboard-list"></i>
-                        {{wishlist.name}}
+                        {{wishlist.init ? wishlist.name : ""}}
                     </label>
                 </div>
                 <div v-else>
                     <label 
                         class="badge bg-warning" 
-                        v-bind:title="wish.getOwner().email"
+                        v-bind:title="owner ? owner.email : ''"
                     >
                         <i class="fas fa-user"></i>
-                        {{wish.getOwner().email.split('@', 1)[0]}}
+                        {{owner ? owner.email.split('@', 1)[0] : ""}}
                     </label>
                 </div>
             </div>
         </header>
         <content>
             <router-link 
-                :to="'/wish/' + wish.id + '/field/'" 
+                :to="sidebarUrl('field')" 
                 class="element"
             >
                 <span class="counter">{{wish.fields.length > 9 ? "9+" : wish.fields.length}}</span>
@@ -58,7 +58,7 @@
             </router-link>
 
             <router-link 
-                :to="'/wish/' + wish.id + '/link/'" 
+                :to="sidebarUrl('link')" 
                 class="element"
             >
                 <span class="counter">{{wish.links.length > 9 ? "9+" : wish.links.length}}</span>
@@ -71,16 +71,16 @@
                 <p class="wish-box-body-element-title">Wypełnione</p>
             </div>
 
-            <div class="element" v-if="wish.isOwner(store.user) && !wish.fulfilled">
+            <div class="element" v-if="isOwner && !wish.fulfilled">
                 <span class="counter">{{wish.subscriptions.length - 1 > 9 ? "9+" : wish.subscriptions.length - 1}}</span>
                 <i class="fas fa-user-friends"></i>
                 <p class="wish-box-body-element-title">Znajomi</p>
             </div>
 
             <router-link 
-                :to="'/wish/' + wish.id + '/subscription/'" 
+                :to="sidebarUrl('subscription')" 
                 class="element" 
-                v-if="wish.isSubscriber(store.user) && !wish.isOwner(store.user) && !wish.fulfilled"
+                v-if="!isOwner && !wish.fulfilled"
             >
                 <span class="counter">{{wish.subscriptions.length - 1 > 9 ? "9+" : wish.subscriptions.length - 1}}</span>
                 <i class="fas fa-user-friends"></i>
@@ -97,25 +97,57 @@
 <script>
 import store from '../../../store/store';
 import caller from '../../../store/wish/caller'; 
+import Wish from '../../../store/wish/entity';
 
 export default {
     props: {
-        id: Number
+        wish: Wish|Object
     },
 
     data(){
         return {
-            store: store.state,
+            store: store.state
         }
     },
 
     computed: {
-        wish: function(){
-            return store.get('wishes', this.id);
-        }
+        wishlists: function(){
+            return this
+                .wish
+                .wishlists
+                .map(
+                    wishlistId => store.get('wishlists', wishlistId)
+                );
+        },
+        owner: function(){
+            if(this.wish.wishlists.length === 0)
+                return this.store.user;
+
+            let wishlists = this
+                .wishlists
+                .filter(
+                    wishlist => wishlist.init
+                );
+
+            if(wishlists.length > 0)
+                return wishlists[0].getOwner();
+        },
+        isOwner: function(){
+            if(this.owner)
+                return this.owner.id == this.store.user.id;
+
+            return false;
+        },
     },
 
     methods:{
+        sidebarUrl: function(subpage){
+            let routeTable = this.$route.name.split(/(?=[A-Z])/);
+            if(routeTable[0] === 'Wishlist')
+                return '/list/' + this.$route.params.wishlist + '/wish/' + this.wish.id + '/' + subpage;
+            
+            return '/wish/' + this.wish.id + '/' + subpage;
+        },
         switchFulfilled(){
             this.wish.switchFulfilled();
             store.update('wishes', this.wish.id, this.wish);

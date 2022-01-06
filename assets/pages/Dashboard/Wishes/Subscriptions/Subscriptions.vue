@@ -2,12 +2,13 @@
     <sidebar-layout>
         <content v-if="wish && wish.init">
             <h6>Znajomi związani z życzeniem {{wish.name}}</h6>
-            <div class="overflow" v-if="!wish.isOwner(store.user)">
+            <div class="overflow" v-if="owner && owner.id != store.user.id">
                 <wish-subscription 
                     v-for="subscription in wish.subscriptions" 
                     :key="subscription.id" 
                     :wish="wish"
                     :subscription="subscription"
+                    :owner="owner"
                 >
                 </wish-subscription>
                 <div v-if="wish.subscriptions.length - 1 == 0">
@@ -51,8 +52,29 @@
 
         computed: {
             wish: function(){
-                let id = Number(this.$route.params.id);
+                let id = Number(this.$route.params.wish);
                 return store.get('wishes', id);
+            },
+            wishlists: function(){
+                return this
+                    .wish
+                    .wishlists
+                    .map(
+                        wishlistId => store.get('wishlists', wishlistId)
+                    );
+            },
+            owner: function(){
+                if(this.wish.wishlists.length === 0)
+                    return this.store.user;
+
+                let wishlists = this
+                    .wishlists
+                    .filter(
+                        wishlist => wishlist.init
+                    );
+
+                if(wishlists.length > 0)
+                    return wishlists[0].getOwner();
             }
         }
     }

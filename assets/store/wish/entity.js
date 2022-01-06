@@ -1,4 +1,5 @@
 import Entity from "../entity";
+import store from "../store";
 
 const ROLE_OWNER = 1;
 const ROLE_SUBSCRIBER = 2;
@@ -16,16 +17,6 @@ class Wish extends Entity{
         this.wishlists = json.wishlists;
     }
 
-    isOwner(user){
-        if(!user) return false;
-
-        let owner = this.getOwner();
-        if(owner)
-            return this.getOwner().id == user.id;
-        else
-            return true;
-    }
-
     isSubscriber(user){
         if(!user) return false;
 
@@ -41,26 +32,6 @@ class Wish extends Entity{
             
         if(subscriptions.length > 0) 
             return subscriptions[0];
-    }
-
-    getOwner(){
-        let subscriptions = this
-            .getWishlistsSubscriptions()
-            .filter(
-                (subscription) => subscription.role == ROLE_OWNER
-            );
-            
-        if(subscriptions.length > 0) 
-            return subscriptions[0].user;
-    }
-
-    getWishlistsSubscriptions(){
-        return this
-            .wishlists
-            .map(
-                (wishlist) => wishlist.subscriptions
-            )
-            .flat();
     }
 
     switchFulfilled(){

@@ -9,13 +9,14 @@
                         :key="link.id" 
                         :wish="wish"
                         :link="link"
+                        :owner="owner"
                     >
                     </wish-link>
                 </div>
                 <div v-else>
                     To życzenie nie ma żadnych linków
                 </div>
-                <wish-link-create :wish="wish"></wish-link-create>
+                <wish-link-create :wish="wish" :owner="owner"></wish-link-create>
             </div>
         </content>
         <div class="d-flex mt-5 justify-content-center" v-else>
@@ -47,8 +48,29 @@
 
         computed: {
             wish: function(){
-                let id = Number(this.$route.params.id);
+                let id = Number(this.$route.params.wish);
                 return store.get('wishes', id);
+            },
+            wishlists: function(){
+                return this
+                    .wish
+                    .wishlists
+                    .map(
+                        wishlistId => store.get('wishlists', wishlistId)
+                    );
+            },
+            owner: function(){
+                if(this.wish.wishlists.length === 0)
+                    return this.store.user;
+
+                let wishlists = this
+                    .wishlists
+                    .filter(
+                        wishlist => wishlist.init
+                    );
+
+                if(wishlists.length > 0)
+                    return wishlists[0].getOwner();
             }
         }
     }
