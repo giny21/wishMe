@@ -70,8 +70,8 @@ class WishlistRepository extends DoctrineRepository
 
         return $query
             ->addOrderBy(...self::SORTS[$sort])
-            ->setFirstResult($page * self::LIMIT_PER_PAGE)
-            ->setMaxResults(self::LIMIT_PER_PAGE)
+            //->setFirstResult($page * self::LIMIT_PER_PAGE)
+            //->setMaxResults(self::LIMIT_PER_PAGE)
             ->getQuery()
             ->getResult();
     }
